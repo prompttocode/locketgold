@@ -19,4 +19,6 @@ V7 có **7 Photobooth và 8 khung**. Mã nguồn và hướng dẫn build ở [v
 
 Theo cập nhật tiếp theo, v7 tắt thêm nút tạo diện mạo riêng bằng các cờ `allows_custom_filters`; 15 mẫu preset vẫn được giữ.
 
+V7 đã bỏ hai request log chẩn đoán ở phía Shadowrocket. Tên script request có hash nội dung để bản module đã cập nhật tải đúng mã mới; giữ endpoint chẩn đoán trên server và tài nguyên v6 cho các client cũ.
+
 Đã kiểm tra TypeScript, 75 trường hợp chọn filter/định tuyến, hai dạng ID dự án Firebase, và ghép thực tế đủ 15 mẫu trên server. Tất cả ảnh trả về JPEG 1080×1080; alias Vintage của v6 vẫn ghép được. Các ảnh thử có họa tiết kiểm soát cũng được kiểm tra để xác nhận Photobooth lặp bốn ô và khung chỉ phủ lên một ảnh. Chưa kiểm chứng danh sách v7 trên điện thoại ở thời điểm push.

@@ -128,3 +128,13 @@ Yêu cầu giao diện: bỏ nhóm AI 3D Hot, Trò chơi Locket và filter cũ; 
 - Module v7 giữ nguyên đường dẫn; script config dùng tên mới theo hash nội dung để điện thoại có thể tải bản đã sửa sau khi cập nhật module.
 - Worker version: `44714d3f-f591-45c9-993d-73b1bb355268`. Mã renderer, native và observer không sửa.
 - Kiểm tra bộ test cấu hình/định tuyến và phản hồi config thực tế trên server; thao tác UI trong Locket vẫn do người dùng thử.
+
+## Cập nhật v7: bỏ hai request chẩn đoán
+
+- Theo yêu cầu người dùng, script native v7 chuyển request ngay, không POST báo cáo trước khi chuyển tiếp; module v7 bỏ hẳn rule response observer.
+- Giữ nguyên rewrite Host, các header được phép, method/body gốc, danh sách 15 preset và cờ ẩn tạo diện mạo.
+- Luồng thành công thông thường còn khoảng hai request chính (ghép và GET ảnh), không tính cấu hình, ảnh khung, retry hoặc client cũ còn dùng script trước đó.
+- Giữ endpoint `/v1/relay-report` và các script v6 để không làm hỏng client cũ/rollback. Log của client cũ vẫn có thể xuất hiện; điều đó không chứng minh v7 mới còn gửi beacon.
+- Script request v7 dùng hash nội dung trong tên để tránh điện thoại dùng bản đã biên dịch cũ khi cập nhật module.
+- Worker version: `bcd7f7ca-a9a8-4592-88e7-bc488ecfc497`; phần renderer không thay đổi.
+- Bộ test 75 trường hợp xác nhận không gọi HTTP chẩn đoán. Module/script đã triển khai cũng được tải lại và chạy kiểm tra tương tự.

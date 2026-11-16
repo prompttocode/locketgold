@@ -37,7 +37,8 @@ for (const item of config.remote_filters) {
 const links = JSON.parse(read('private/links.json'));
 const module = read('public' + new URL(links.module).pathname);
 const lines = module.split('\n').filter(line => line.includes('script-path='));
-assert.equal(lines.length, 3);
+assert.equal(lines.length, 2);
+assert(!module.includes('locket_observe_v7'));
 let rewritten;
 const configUrl = new URL(lines[0].split('script-path=')[1]);
 const configCode = read('public' + configUrl.pathname);
@@ -55,16 +56,18 @@ for (const project of ['locket-4252a', '641029076083']) {
 
 const nativeUrl = new URL(lines[1].split('script-path=')[1]);
 const nativeCode = read('public' + nativeUrl.pathname);
+assert(!nativeCode.includes('/v1/relay-report'));
 const runRoute = body => {
-  let output, count = 0;
+  let output, count = 0, outgoing = 0;
   vm.runInNewContext(nativeCode, {
     $request: {url: 'https://api.locketcamera.com/generateFilteredImage', method: 'POST', body,
       headers: {Authorization: 'do-not-forward', 'Content-Type': 'application/json', 'Content-Length': '123'}},
-    $httpClient: {post(options, callback) { callback(null, {status: 200}, '{}'); }},
+    $httpClient: {post() { outgoing++; throw new Error('Diagnostic HTTP requests must not be sent'); }},
     $done: result => { output = result; count++; }, console: {log() {}},
     ArrayBuffer, Uint8Array, TextDecoder
   });
   assert.equal(count, 1);
+  assert.equal(outgoing, 0);
   return output;
 };
 for (const filter of config.remote_filters) {
@@ -87,4 +90,4 @@ for (const name of fs.existsSync(oldModules) ? fs.readdirSync(oldModules).filter
   const after = fs.readFileSync(new URL('public/modules/' + name, root));
   assert.equal(crypto.createHash('sha256').update(before).digest('hex'), crypto.createHash('sha256').update(after).digest('hex'));
 }
-console.log('PASS: 15 filters, two groups, preserved unrelated config, 75 routing cases, binary input, V6 assets unchanged.');
+console.log('PASS: 15 filters, two groups, 75 routing cases, zero diagnostic requests, binary input, V6 assets unchanged.');

@@ -13,9 +13,8 @@ function decode(raw){
  if(raw&&typeof raw==='object')return raw;
  throw new Error('No JSON body');
 }
-let body,data,decoded=false,selected=false;
-try{body=decode($request.body);data=body.data||body;decoded=true;const id=data.filter_id||data.filterId||data.filter_uid||data.filterUid||data.prompt;selected=__SELECT_FILTER__;}catch(_){}
-const meta={stage:'native_request',body_type:kind($request.body),decode_ok:decoded,selected:selected,data_keys:data&&typeof data==='object'?Object.keys(data).slice(0,20):[]};
+let body,data,selected=false;
+try{body=decode($request.body);data=body.data||body;const id=data.filter_id||data.filterId||data.filter_uid||data.filterUid||data.prompt;selected=__SELECT_FILTER__;}catch(_){}
 let completed=false;
 function finish(){
  if(completed)return;completed=true;
@@ -29,5 +28,5 @@ function finish(){
  // Do not reserialize or replace method/body: preserve the original byte length.
  $done({url:SERVER+'/generateFilteredImage',headers:headers});
 }
-try{$httpClient.post({url:SERVER+'/v1/relay-report',headers:{'Content-Type':'application/json','X-Namdz-Key':KEY},body:JSON.stringify(meta),timeout:3},function(){finish();});}catch(_){finish();}
+finish();
 })();

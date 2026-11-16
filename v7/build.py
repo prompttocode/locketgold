@@ -163,7 +163,7 @@ def main():
     supported = list(definitions) + ['namdz_vintage']
     selector = compact(supported) + '.includes(id)||' + compact(supported) + '.some(function(value){return JSON.stringify(data).indexOf(JSON.stringify(value))>=0;})'
     native = (ROOT / 'templates/native-v7.js').read_text().replace('__KEY__', compact(key)).replace('__SERVER__', compact(ORIGIN)).replace('__SELECT_FILTER__', selector)
-    native_name = 'native-v7-' + suffix + '.js'
+    native_name = 'native-v7-' + suffix + '-' + hashlib.sha256(native.encode()).hexdigest()[:12] + '.js'
     (PUBLIC / 'modules' / native_name).write_text(native)
     observer = (ROOT / 'templates/observe.js').read_text().replace('__KEY__', compact(key)).replace('__SERVER__', compact(ORIGIN))
     (PUBLIC / 'modules' / ('observe-v6-' + suffix + '.js')).write_text(observer)
@@ -174,12 +174,11 @@ def main():
 [Script]
 locket_config_v7 = type=http-response,pattern=^https:\\/\\/firebaseremoteconfig\\.googleapis\\.com\\/v1\\/projects\\/(locket-4252a|641029076083)\\/namespaces\\/firebase(:|%3A)fetch,requires-body=1,max-size=0,script-path=__ORIGIN__/modules/__CONFIG__
 locket_frame_v7 = type=http-request,pattern=^https:\\/\\/(api\\.locketcamera\\.com|us-central1-locket-4252a\\.cloudfunctions\\.net)\\/generateFilteredImage(?:[/?]|$),requires-body=1,max-size=0,timeout=60,script-path=__ORIGIN__/modules/__NATIVE__
-locket_observe_v7 = type=http-response,pattern=^https:\\/\\/(api\\.locketcamera\\.com|us-central1-locket-4252a\\.cloudfunctions\\.net|namdz-photobooth\\.namvu3121\\.workers\\.dev)\\/generateFilteredImage(?:[/?]|$),requires-body=1,max-size=0,timeout=10,script-path=__ORIGIN__/modules/observe-v6-__SUFFIX__.js
 
 [MITM]
 hostname = %APPEND% firebaseremoteconfig.googleapis.com, api.locketcamera.com, us-central1-locket-4252a.cloudfunctions.net, namdz-photobooth.namvu3121.workers.dev
 '''
-    module = module.replace('__ORIGIN__', ORIGIN).replace('__CONFIG__', config_name).replace('__NATIVE__', native_name).replace('__SUFFIX__', suffix)
+    module = module.replace('__ORIGIN__', ORIGIN).replace('__CONFIG__', config_name).replace('__NATIVE__', native_name)
     module_name = 'Locket-Photobooth-v7-' + module_suffix + '.sgmodule'
     (PUBLIC / 'modules' / module_name).write_text(module)
     # Preserve the old renderer frame path as well as the new V7 asset path.

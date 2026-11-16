@@ -6,7 +6,7 @@ Nút tạo diện mạo riêng bị tắt bằng `allows_custom_filters` / `allo
 
 Nguồn PNG ở `frames/`. File `catalog.json` ghi tên, nhóm và vùng ghép đã chuẩn hóa sang 1080×1080. Các PNG gốc 1024/1080/1254 được giữ nguyên; Worker co khung về 1080 khi ghép. Khung Sweet Memories và Sinh nhật Hello Kitty chỉ có một ô nên thuộc nhóm Khung.
 
-`src/index.ts` dựa trên bản đang dùng sau đổi popup, chỉ mở rộng lựa chọn khung/vùng ghép. Giữ giao thức response và cách chuyển request của v6. Lỗi xen kẽ thành công/thất bại chưa được giải quyết.
+`src/index.ts` dựa trên bản đang dùng sau đổi popup, chỉ mở rộng lựa chọn khung/vùng ghép. Giữ giao thức response và phần rewrite Host/body/method của v6. V7 hiện không gửi request chẩn đoán trước khi chuyển tiếp, đồng thời không cài response observer gửi log. Luồng bình thường còn một request ghép và một request tải ảnh, chưa tính tải cấu hình/khung hoặc retry. Lỗi xen kẽ trước đây không được coi là đã sửa bằng thay đổi này.
 
 ## Build và kiểm tra
 
