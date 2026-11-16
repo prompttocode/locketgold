@@ -17,4 +17,6 @@ Không đưa API key, chứng chỉ, cookie, dữ liệu người dùng hoặc s
 
 V7 có **7 Photobooth và 8 khung**. Mã nguồn và hướng dẫn build ở [v7/README.md](v7/README.md). Chỉ danh sách filter thay đổi; các cấu hình ngoài phạm vi được giữ nguyên.
 
+Theo cập nhật tiếp theo, v7 tắt thêm nút tạo diện mạo riêng bằng các cờ `allows_custom_filters`; 15 mẫu preset vẫn được giữ.
+
 Đã kiểm tra TypeScript, 75 trường hợp chọn filter/định tuyến, hai dạng ID dự án Firebase, và ghép thực tế đủ 15 mẫu trên server. Tất cả ảnh trả về JPEG 1080×1080; alias Vintage của v6 vẫn ghép được. Các ảnh thử có họa tiết kiểm soát cũng được kiểm tra để xác nhận Photobooth lặp bốn ô và khung chỉ phủ lên một ảnh. Chưa kiểm chứng danh sách v7 trên điện thoại ở thời điểm push.

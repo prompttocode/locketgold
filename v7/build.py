@@ -102,6 +102,9 @@ def main():
     (PUBLIC / 'config').mkdir(parents=True, exist_ok=True)
     payload = json.loads((ROOT / 'base-config.json').read_text())
     camera = json.loads(payload['entries']['camera_filter_config'])
+    camera['allows_custom_filters'] = False
+    camera['allowsCustomFilters'] = False
+    payload['entries']['allows_custom_filters'] = 'false'
     prototype = next(f for f in camera['remote_filters'] if f['uid'] == 'pb_vintage')
     filters, definitions, report = [], {}, []
     for uid, filename, label, group in CATALOG:
@@ -184,7 +187,7 @@ hostname = %APPEND% firebaseremoteconfig.googleapis.com, api.locketcamera.com, u
     private = ROOT / 'private'
     private.mkdir(exist_ok=True, mode=0o700)
     (private / 'links.json').write_text(json.dumps({'module': ORIGIN + '/modules/' + module_name}, indent=2))
-    print(f'Built {len(filters)} filters: 7 Photobooth + 8 Khung; only camera_filter_config changed.')
+    print(f'Built {len(filters)} filters: 7 Photobooth + 8 Khung; custom-look creation disabled.')
 
 
 if __name__ == '__main__':

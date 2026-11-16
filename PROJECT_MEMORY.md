@@ -119,3 +119,12 @@ Yêu cầu giao diện: bỏ nhóm AI 3D Hot, Trò chơi Locket và filter cũ; 
 - 15/15 mẫu đã ghép và tải JPEG 1080 thành công trên server; alias cũ cũng thành công. Đã xem ảnh ghép thử tổng hợp và ảnh họa tiết kiểm soát để xác nhận crop/lặp ảnh/khung.
 - Lần kiểm tra cuối chưa bao gồm thao tác chụp thực tế của người dùng với v7. Không tuyên bố đã sửa lỗi xen kẽ.
 - Các module đã sinh, đường dẫn module riêng và file chứa khóa đều bị Git bỏ qua. Chỉ đẩy template có placeholder, nguồn Worker, manifest và các PNG người dùng cung cấp.
+
+## Cập nhật v7: ẩn nút tạo diện mạo
+
+- Người dùng yêu cầu bỏ nút tạo diện mạo riêng, giữ bộ sưu tập preset hiện có.
+- Đặt `camera_filter_config.allows_custom_filters` và `allowsCustomFilters` thành false; cờ Remote Config cấp ngoài `allows_custom_filters` thành chuỗi `false`.
+- Giữ `custom_filters_enabled` và cờ mở bộ chọn filter, để không vô tình tắt toàn bộ 15 mẫu preset.
+- Module v7 giữ nguyên đường dẫn; script config dùng tên mới theo hash nội dung để điện thoại có thể tải bản đã sửa sau khi cập nhật module.
+- Worker version: `44714d3f-f591-45c9-993d-73b1bb355268`. Mã renderer, native và observer không sửa.
+- Kiểm tra bộ test cấu hình/định tuyến và phản hồi config thực tế trên server; thao tác UI trong Locket vẫn do người dùng thử.
