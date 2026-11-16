@@ -13,3 +13,6 @@ v7/public/modules/
 v7/.dev.vars
 v7/.wrangler/
 v7/private/
+v7/public/assets/
+v7/public/config/
+worker-configuration.d.ts

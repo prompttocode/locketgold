@@ -1,0 +1,338 @@
+[
+  {
+    "id": "pb_vintage",
+    "name": "Vintage 2×2",
+    "group": "Photobooth",
+    "source": "pb_vintage@3x.png",
+    "slots": [
+      [
+        70,
+        62,
+        445,
+        440
+      ],
+      [
+        568,
+        63,
+        443,
+        439
+      ],
+      [
+        70,
+        562,
+        445,
+        441
+      ],
+      [
+        568,
+        563,
+        443,
+        440
+      ]
+    ]
+  },
+  {
+    "id": "pb_cortis_v2",
+    "name": "Cortis 2×2",
+    "group": "Photobooth",
+    "source": "pb_cortis_v2@3x.png",
+    "slots": [
+      [
+        106,
+        98,
+        426,
+        390
+      ],
+      [
+        548,
+        98,
+        426,
+        390
+      ],
+      [
+        106,
+        504,
+        426,
+        434
+      ],
+      [
+        548,
+        504,
+        426,
+        434
+      ]
+    ]
+  },
+  {
+    "id": "pb_denim_ripped_2x2",
+    "name": "Denim 2×2",
+    "group": "Photobooth",
+    "source": "pb_denim_ripped_2x2%403x.png",
+    "slots": [
+      [
+        72,
+        60,
+        432,
+        436
+      ],
+      [
+        574,
+        64,
+        436,
+        428
+      ],
+      [
+        70,
+        562,
+        442,
+        442
+      ],
+      [
+        582,
+        552,
+        432,
+        458
+      ]
+    ]
+  },
+  {
+    "id": "pb_holo_4cut",
+    "name": "Holo 2×2",
+    "group": "Photobooth",
+    "source": "pb_holo_4cut.png",
+    "slots": [
+      [
+        58,
+        66,
+        454,
+        450
+      ],
+      [
+        562,
+        48,
+        468,
+        466
+      ],
+      [
+        70,
+        556,
+        444,
+        484
+      ],
+      [
+        564,
+        558,
+        466,
+        436
+      ]
+    ]
+  },
+  {
+    "id": "pb_meo_dang_yeu_4cut",
+    "name": "Mèo đáng yêu 2×2",
+    "group": "Photobooth",
+    "source": "pb_meo_dang_yeu_4cut@3x.png",
+    "slots": [
+      [
+        102,
+        80,
+        430,
+        454
+      ],
+      [
+        552,
+        98,
+        426,
+        436
+      ],
+      [
+        108,
+        544,
+        420,
+        454
+      ],
+      [
+        552,
+        544,
+        428,
+        454
+      ]
+    ]
+  },
+  {
+    "id": "pb_strawberry",
+    "name": "Dâu tây 2×2",
+    "group": "Photobooth",
+    "source": "pb_strawberry.png",
+    "slots": [
+      [
+        78,
+        84,
+        434,
+        428
+      ],
+      [
+        568,
+        86,
+        434,
+        426
+      ],
+      [
+        78,
+        554,
+        434,
+        436
+      ],
+      [
+        568,
+        554,
+        434,
+        436
+      ]
+    ]
+  },
+  {
+    "id": "pb_supperman_4cut",
+    "name": "Superman 2×2",
+    "group": "Photobooth",
+    "source": "pb_supperman_4cut.png",
+    "slots": [
+      [
+        86,
+        64,
+        426,
+        456
+      ],
+      [
+        568,
+        64,
+        428,
+        456
+      ],
+      [
+        86,
+        560,
+        426,
+        446
+      ],
+      [
+        568,
+        560,
+        428,
+        446
+      ]
+    ]
+  },
+  {
+    "id": "frame_ba_khi",
+    "name": "Bá khí",
+    "group": "Khung",
+    "source": "Khung Bá khí.png",
+    "slots": [
+      [
+        0,
+        0,
+        1080,
+        1080
+      ]
+    ]
+  },
+  {
+    "id": "khung_hello_kitty_h_ng_pastel",
+    "name": "Hello Kitty pastel",
+    "group": "Khung",
+    "source": "khung_hello_kitty_h_ng_pastel@3x.png",
+    "slots": [
+      [
+        0,
+        0,
+        1080,
+        1080
+      ]
+    ]
+  },
+  {
+    "id": "khung_kh_ng_gian_xanh_pastel",
+    "name": "Không gian xanh",
+    "group": "Khung",
+    "source": "khung_kh_ng_gian_xanh_pastel.png",
+    "slots": [
+      [
+        0,
+        0,
+        1080,
+        1080
+      ]
+    ]
+  },
+  {
+    "id": "khung_nh_shin_chan_vi_n_m_nh",
+    "name": "Shin-chan",
+    "group": "Khung",
+    "source": "khung_nh_shin_chan_vi_n_m_nh.png",
+    "slots": [
+      [
+        0,
+        0,
+        1080,
+        1080
+      ]
+    ]
+  },
+  {
+    "id": "khung_vu_ng_ng_i_sao_h_ng_pastel",
+    "name": "Ngôi sao hồng",
+    "group": "Khung",
+    "source": "khung_vu_ng_ng_i_sao_h_ng_pastel.png",
+    "slots": [
+      [
+        0,
+        0,
+        1080,
+        1080
+      ]
+    ]
+  },
+  {
+    "id": "khung_xanh_v_tay_sao_v_ng",
+    "name": "Xanh sao vàng",
+    "group": "Khung",
+    "source": "khung_xanh_v_tay_sao_v_ng.png",
+    "slots": [
+      [
+        0,
+        0,
+        1080,
+        1080
+      ]
+    ]
+  },
+  {
+    "id": "photobooth_cute",
+    "name": "Sweet Memories",
+    "group": "Khung",
+    "source": "photobooth_cute.png",
+    "slots": [
+      [
+        0,
+        0,
+        1080,
+        1080
+      ]
+    ]
+  },
+  {
+    "id": "khung_hello_kitty_pastel_ng_t_ng_o",
+    "name": "Sinh nhật Hello Kitty",
+    "group": "Khung",
+    "source": "sinh_nh_t_hello_kitty_ho_i_c.png",
+    "slots": [
+      [
+        0,
+        0,
+        1080,
+        1080
+      ]
+    ]
+  }
+]

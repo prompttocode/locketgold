@@ -14,7 +14,7 @@ Không cần Gemini cho khung PNG. AI là hạng mục tương lai; nếu triể
 - Origin: `https://namdz-photobooth.namvu3121.workers.dev`.
 - Bản v6 gốc: `8d8e9759-9673-452a-86d0-fa93b7aa7c12`, triển khai lúc 19:20 ngày 16/11/2026.
 - Bản đang chạy sau sửa popup: `0e0d7649-4491-4499-80c3-dc6d16077d01`.
-- Mã Worker của bản sửa popup giống từng byte với v6 gốc. Chỉ cấu hình popup và URL tải lại config script thay đổi.
+- Mã Worker của bản sửa popup được đối chiếu byte với bản tải về làm nền tại thời điểm phục hồi; phiên bản `0e0d...` là mốc người dùng đã xác nhận còn dùng được. Không suy ra chỉ từ endpoint `content/v2` rằng nội dung tải về chắc chắn là mã của phiên bản rollback: API nội dung có thể theo lần upload mới nhất. Dùng mốc `0e0d...` và snapshot đã kiểm tra làm nền cho v7.
 - Popup: bỏ ảnh, tiêu đề phụ “Locket vip by hnamhastheblues”, nội dung phụ để trống.
 - Người dùng xác nhận v6 có thể ghép ảnh nhưng còn xen kẽ một lần lỗi/một lần thành công. Không được coi đây là lỗi đã sửa.
 - V5 cũng từng có thành công thực tế. Đã nhiều lần khôi phục phiên bản, vì vậy tên tệp trên Mac không đủ để suy ra mã đang chạy trên Cloudflare.
@@ -92,7 +92,7 @@ MITM chỉ giới hạn ở Firebase Remote Config, endpoint API lọc ảnh và
 
 Thư mục người dùng: `/Users/namdeptrai/Downloads/Pb và khung` (tên Unicode có thể ở dạng NFD).
 
-Có 15 PNG: 9 Photobooth gồm Vintage, Cortis, Denim, Holo, Mèo, Strawberry, Superman, Cute và Hello Kitty sinh nhật; cùng 6 khung gồm Bá khí, Hello Kitty pastel, không gian xanh, Shin-chan, ngôi sao hồng, xanh vẽ tay. Cách chia nhóm chính xác phải dựa vào nội dung ảnh thay vì chỉ tên file.
+Có 15 PNG. Theo xác nhận mới của người dùng, 7 tên bắt đầu bằng `pb_` là Photobooth: Vintage, Cortis, Denim, Holo, Mèo, Strawberry, Superman. Cả bảy có bốn ô trống và dùng một ảnh lặp bốn lần. 8 ảnh còn lại là Khung, gồm Bá khí, Hello Kitty pastel, không gian xanh, Shin-chan, ngôi sao hồng, xanh vẽ tay, Sweet Memories và Hello Kitty sinh nhật; cả tám phủ lên một ảnh duy nhất.
 
 Yêu cầu giao diện: bỏ nhóm AI 3D Hot, Trò chơi Locket và filter cũ; Photobooth không có hậu tố NAMDZ V3; giữ Vintage thử nghiệm và bỏ chữ Namdz; bổ sung các ảnh mới. Giữ caption, poll, người xem ảnh và những cấu hình không liên quan.
 
@@ -105,3 +105,17 @@ Yêu cầu giao diện: bỏ nhóm AI 3D Hot, Trò chơi Locket và filter cũ; 
 - Trước deploy: kiểm tra kiểu TypeScript, kiểm thử chọn filter và vùng ghép, kiểm tra rằng các cấu hình ngoài phạm vi không đổi.
 - Sau deploy: kiểm tra HTTP cho module/script/frame; thử ghép server; báo rõ phần nào đã kiểm chứng và phần nào đang chờ thử trên điện thoại.
 - Tên v7 không được ghi đè link v6. Giữ tài nguyên v6 để có đường quay lại.
+
+## Trạng thái sau khi làm v7
+
+- Commit ghi nhớ ban đầu `d1a7b77` đã được push trước khi bắt đầu viết v7.
+- Nguồn triển khai chính thức cho thay đổi này: `v7/src/index.ts`, `v7/wrangler.jsonc`; các lệnh npm mặc định đã chuyển sang cấu hình v7.
+- Phiên bản Worker đã deploy: `53a4d8cf-c33a-4b3e-a5e4-eae8c93295dd`.
+- Danh sách chỉ còn Photobooth (7) và Khung (8). Giữ Vintage đầu tiên; không có chữ Namdz trong tên/nhóm filter.
+- `base-config.json` là mốc đối chiếu. Test xác nhận chỉ `camera_filter_config` thay đổi, không thay các cờ khác.
+- `build.py` dò bốn vùng alpha lớn cho Photobooth, chuẩn hóa tọa độ về 1080, và giữ nguyên tọa độ Vintage đã được thử. PNG có một ô dùng ảnh nền full canvas rồi phủ khung, không nhân ảnh thành bốn.
+- Module v7 có script config và native riêng. Chỉ mở rộng danh sách ID được native-v6 chuyển tiếp và đổi nhãn phiên bản; không thay cách giữ body/method/Host của v6.
+- Giữ các URL/tài nguyên v6 trong deployment. Server hỗ trợ alias `namdz_vintage` cho phiên bản cũ.
+- 15/15 mẫu đã ghép và tải JPEG 1080 thành công trên server; alias cũ cũng thành công. Đã xem ảnh ghép thử tổng hợp và ảnh họa tiết kiểm soát để xác nhận crop/lặp ảnh/khung.
+- Lần kiểm tra cuối chưa bao gồm thao tác chụp thực tế của người dùng với v7. Không tuyên bố đã sửa lỗi xen kẽ.
+- Các module đã sinh, đường dẫn module riêng và file chứa khóa đều bị Git bỏ qua. Chỉ đẩy template có placeholder, nguồn Worker, manifest và các PNG người dùng cung cấp.
