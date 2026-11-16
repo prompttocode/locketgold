@@ -1,0 +1,15 @@
+node_modules/
+.wrangler/
+.dev.vars
+.lab-secrets.json
+public/modules/
+rollback-snapshots/
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+v7/public/modules/
+v7/.dev.vars
+v7/.wrangler/
+v7/private/
