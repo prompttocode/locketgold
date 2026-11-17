@@ -6,6 +6,8 @@ Mã nguồn thử nghiệm Photobooth và khung ảnh riêng: Cloudflare Workers
 
 Không đưa API key, chứng chỉ, cookie, dữ liệu người dùng hoặc script đã nhúng khóa truy cập lên Git. Module dùng trên điện thoại được tạo cục bộ từ mẫu và không nằm trong repo.
 
+Ảnh nguồn nằm trong [v7/frames](v7/frames) và [v7/ai](v7/ai). Bộ PNG đã build để app sử dụng nằm trong [v7/public/assets](v7/public/assets), gồm khung đã chuẩn hóa, thumbnail và icon AI. Tài khoản chính và bản Minh dùng cùng bộ ảnh; không lưu thêm bản sao trong từng thư mục triển khai. Module/script có khóa và cấu hình sinh tự động vẫn được Git bỏ qua.
+
 ## Bản chốt: V7.4
 
 Ngày 17/11/2026, người dùng xác nhận V7.4 đã chạy được trên iPhone và chọn bản này. Mã nguồn, giới hạn và hướng dẫn nằm trong [v7.4/README.md](v7.4/README.md).

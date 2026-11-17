@@ -1,5 +1,12 @@
 # Ghi nhớ dự án
 
+## Đưa bộ asset đã build lên Git — 17/11/2026
+
+- Người dùng hỏi thêm assets lên GitHub sau lần push sourceAI. Ảnh gốc đã có ở v7/frames, v7/ai và v7/static; bổ sung canonical `v7/public/assets/` để xem trực tiếp bộ phục vụ app.
+- Có38 PNG, tổng14443263bytes (khoảng13,8MiB): khung chuẩn hóa, thumbnail, iconAI và ảnh mẫu màu trơn/blank. Không có ảnh chụp người dùng, key hoặc script trong bộ này. Các tên alias trùng nội dung được giữ để tương thích đường dẫn client.
+- Bỏ đúng ignore v7/public/assets/. Các public/modules, public/config, private, env, credential, snapshot và bản sao public V7.1–V7.4/Minh vẫn bị Git bỏ qua. Không stage root public/src/experiments chưa theo dõi.
+- Lượt này chỉ commit/push ảnh và tài liệu, không deploy hoặc đổi module/routing/backend. Các câu lịch sử “không đưa tài nguyên public sinh tự động” có ngoại lệ mới cho bộ PNG canonical này.
+
 ## Chốt push bổ sung AI — 17/11/2026
 
 - Người dùng yêu cầu push trạng thái hiện tại lên GitHub: Sang trọng giữ cảnh gốc + vest.png trong suốt, Grab/Bee và bốn AI dùng chung quota; kèm nguồn triển khai độc lập cho tài khoản Minh.
