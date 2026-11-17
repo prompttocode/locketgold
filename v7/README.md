@@ -1,6 +1,20 @@
 # Photobooth v7
 
-Hai nhóm: **Photobooth** (7 PNG tên `pb_`, một ảnh lặp bốn ô) và **Khung** (8 PNG còn lại, phủ lên một ảnh). Không có nhóm AI hoặc trò chơi trong danh sách filter v7.
+Ba nhóm hiện tại: **Photobooth** (7 PNG tên `pb_`, một ảnh lặp bốn ô), **Khung** (8 PNG phủ lên một ảnh) và **AI** (Mùa đông). Không có nhóm AI 3D cũ hoặc trò chơi trong danh sách filter v7.
+
+## Bổ sung AI Mùa đông — 2026-11-17
+
+Danh sách mới có thêm hàng **AI**, filter `ai_winter` tên **Mùa đông**, dùng `ai/Ice.png` làm icon. 15 mẫu Photobooth/Khung cũ giữ nguyên. Ảnh icon chỉ để hiển thị; đầu vào tạo ảnh là ảnh người dùng vừa chụp.
+
+`src/winter.ts` dùng Cloudflare Workers AI binding, model `@cf/black-forest-labs/flux-2-klein-4b`. Prompt cố định ưu tiên danh tính, số người, trang phục, bố cục; thêm môi trường mùa đông hợp lý với cả cảnh trong nhà. Không bảo đảm giữ chi tiết chính xác tuyệt đối vì đây là ảnh do mô hình sinh lại.
+
+Không cần key Google. Ảnh đầu vào chỉ xử lý trên Cloudflare, không gửi token/Authorization của Locket. Giới hạn ảnh vào 6 MB; dùng Images thu ảnh tham chiếu về 512×512 theo yêu cầu FLUX, xuất AI 1024×1024 rồi chuẩn hóa JPEG 1080 và lưu tạm 15 phút. Mỗi lần AI hiện có hai tác vụ Images (ảnh vào và ảnh ra); hạn mức Images và Workers AI tách riêng.
+
+Giới hạn nội bộ 80 lượt gọi AI/ngày dùng chung dịch vụ, đếm cả lượt lỗi, đặt lại 00:00 UTC (07:00 Việt Nam). Bảng `ai_daily_usage` cập nhật nguyên tử bằng UPSERT RETURNING. Không tự retry, không chuyển sang provider khác và không tự nâng gói. Chi phí lý thuyết 512px vào +1024px ra khoảng 109,57 neurons/lượt; 80 lượt dưới 10.000 neurons, nhưng hạn mức tài khoản còn dùng chung các ứng dụng AI khác.
+
+Triển khai bảng trước khi chạy: `npx wrangler d1 execute namdz-photobooth-results --remote --config v7/wrangler.jsonc --file v7/ai/schema.sql`. Kiểm tra: `npm test`, `npm run check`, `node v7/live-ai.mjs`. Live test xác nhận khung Vintage 200 và AI 200, JPEG tải được, thời gian 6–8 giây. Đã xem kết quả từ ảnh phong cảnh tham chiếu; chưa kiểm chứng bảo toàn khuôn mặt hoặc thao tác chụp thực tế trong Locket. Ảnh thử chỉ lưu vào `private/` bị Git bỏ qua.
+
+Lịch sử: Gemini từng nhận key nhưng tạo ảnh lỗi 429, quota Free Tier bằng 0. Đã chuyển hoàn toàn sang Workers AI theo yêu cầu dùng miễn phí; Google secret cũ không còn được mã đang chạy đọc.
 
 Nút tạo diện mạo riêng bị tắt bằng `allows_custom_filters` / `allowsCustomFilters` trong camera config và `allows_custom_filters` ở cấp Remote Config. Giữ nguyên cờ bật bộ sưu tập custom filter để không tắt 15 mẫu preset.
 

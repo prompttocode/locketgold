@@ -1,5 +1,25 @@
 # Ghi nhớ dự án
 
+## Mới nhất: chuyển AI sang Cloudflare miễn phí — 17/11/2026
+
+- Người dùng đã yêu cầu chuyển khỏi Gemini vì không muốn trả phí. Worker đang chạy `e55717f8-59f4-4814-b6ba-e720cb4d5e2d`, có binding `AI`.
+- `generateWinter` dùng `@cf/black-forest-labs/flux-2-klein-4b`, multipart có ảnh binary `input_image_0`; Images thu ảnh xuống 512×512 trước inference, output AI 1024 rồi chuẩn hóa JPEG 1080. Hai tác vụ Images cho một AI; quota khác Workers AI 10.000 neurons/ngày.
+- Không gọi Google, không cần thêm key. Không tự nâng tài khoản hay fallback provider. Google secret cũ còn ở server nhưng không được code đọc.
+- D1 `ai_daily_usage` giới hạn nguyên tử 80 lượt gọi/ngày, gồm lượt lỗi, reset00:00 UTC/07:00 Việt Nam. Ước tính 80×109,57 neurons = 8.765,6 neurons nếu 512px input/1024px output; tài khoản có thể dùng chung quota với ứng dụng AI khác.
+- Live test: Vintage 200/226.348 bytes; AI mẫu màu trơn 200/~6giây, JPEG261.567bytes. Ảnh màu trơn không chứng minh giữ chủ thể. Test tiếp bằng Ice.png (phong cảnh do người dùng cung cấp) 200/~7,3giây, JPEG327.707bytes, đã xem ảnh kết quả giữ cảnh đèn/cây/lối đi. Chưa có portrait thật hoặc thao tác chụp trên Locket, không tuyên bố đã kiểm chứng danh tính/khuôn mặt.
+- Test cấu hình 80 tuyến, adapter multipart + quota/no-retry và TypeScript pass. Link module v7 không đổi; cập nhật module/biên dịch để nhận hàng AI và routing mới.
+- Nguồn AI chưa commit/push Git. Các ghi chú Gemini dưới đây là lịch sử.
+
+## Cập nhật mới nhất: AI Mùa đông — 17/11/2026
+
+- Đã deploy Worker `0f8cd7de-1968-4e06-961b-def1dbf8a68d` từ `v7/wrangler.jsonc`; module v7 giữ cùng URL nhưng script config/native đổi hash.
+- Thêm hàng AI với `ai_winter` / Mùa đông, icon từ `v7/ai/Ice.png`; giữ 15 Photobooth/Khung. Không dùng icon làm ảnh tham chiếu, chỉ gửi ảnh chụp người dùng.
+- `v7/src/winter.ts`: Gemini REST với model `gemini-nano-banana-2.1`, prompt cố định ưu tiên bảo toàn chủ thể; ảnh 1K, sau đó chuẩn hóa JPEG 1080 qua Images. Timeout Google 45 giây, không tự retry; API key chỉ lưu ở Worker Secret `GEMINI_API_KEY`, không ghi vào Git/module/SQLite.
+- Khóa do người dùng cung cấp gọi list models được HTTP 200. Tạo ảnh thật trả 429 RESOURCE_EXHAUSTED, quota Free Tier input token bằng 0. Google image API không có Free Tier cho model này. Chưa tạo thành công ảnh AI; chưa được kiểm chứng trên điện thoại. Không tự bật billing.
+- Test cấu hình/80 tuyến + test adapter Gemini và TypeScript pass. Live regression `pb_vintage` trả JPEG 200; `ai_winter` trả mã đã xử lý `AI_GOOGLE_429`, không làm hỏng khung cũ.
+- Người dùng muốn phương án AI miễn phí thay Google; đang xem Workers AI FLUX.2 klein. Chưa đổi provider khi chưa kiểm tra điều kiện/quota.
+- Những thay đổi AI này chưa commit/push Git tại thời điểm cập nhật tài liệu.
+
 Tài liệu được lập trước khi bắt đầu v7, theo yêu cầu của người dùng. Cập nhật ngày 16/11/2026, múi giờ Việt Nam.
 
 ## Mục tiêu và phạm vi

@@ -7,11 +7,13 @@
     "build": "python3 v7/build.py",
     "types": "wrangler types --config v7/wrangler.jsonc v7/worker-configuration.d.ts",
     "deploy": "wrangler deploy --config v7/wrangler.jsonc",
-    "test": "node v7/test.mjs",
+    "test": "node v7/test.mjs && node v7/test-ai.mjs",
     "check": "tsc --project v7/tsconfig.json"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261116.1",
+    "@types/node": "^26.6.6",
+    "esbuild": "^0.28.2",
     "typescript": "^7.0.2",
     "wrangler": "^4.162.0"
   }

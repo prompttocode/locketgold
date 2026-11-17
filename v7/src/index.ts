@@ -1,4 +1,6 @@
 import {FRAME_DEFINITIONS} from './frames';
+import {Buffer} from 'node:buffer';
+import {WINTER_ID, WINTER_MODEL, WinterError, generateWinter} from './winter';
 
 type FrameId = keyof typeof FRAME_DEFINITIONS;
 
@@ -83,16 +85,34 @@ async function render(request: Request, env: Env): Promise<Response> {
   try { body = object(JSON.parse(new TextDecoder().decode(raw))); }
   catch (error) { if (error instanceof ClientError) throw error; throw new ClientError('JSON không hợp lệ.'); }
   const data = body.data === undefined ? body : object(body.data);
-  const selected = frameId(data.filter_id ?? data.filterId ?? data.filter_uid ?? data.filterUid ?? data.prompt ?? 'pb_vintage');
+  const requested = data.filter_id ?? data.filterId ?? data.filter_uid ?? data.filterUid ?? data.prompt ?? 'pb_vintage';
+  const selected = requested === WINTER_ID ? WINTER_ID : frameId(requested);
   if (!selected) throw new ClientError('Không có khung này trong bộ sưu tập.',422);
-  const layout = FRAME_DEFINITIONS[selected];
   const source = data.images ?? data.image_url ?? data.imageUrl ?? data.input_image_url ?? data.inputImageUrl ?? data.image;
   const images = Array.isArray(source) ? source : source ? [source] : [];
+  const origin = new URL(request.url).origin;
+  if (selected === WINTER_ID) {
+    if (images.length !== 1 || typeof images[0] !== 'string') throw new ClientError('AI cần đúng một ảnh đầu vào.',422);
+    const blob = await sourceImage(images[0], origin, env);
+    const input = images[0].startsWith('data:')
+      ? Buffer.from(await blob.text(), 'base64') : new Uint8Array(await blob.arrayBuffer());
+    // The Workers AI FLUX.2 endpoint requires references at most 512px.
+    const reference = await env.IMAGES.input(new Blob([new Uint8Array(input)]).stream())
+      .transform({width:512,height:512,fit:'contain'})
+      .output({format:'image/jpeg',quality:95,background:'#ffffff'});
+    const referenceBytes = new Uint8Array(await limitedBody(reference.response().body,1_800_000));
+    const generated = await generateWinter(referenceBytes, env);
+    const output = await env.IMAGES.input(new Blob([new Uint8Array(generated)]).stream())
+      .transform({width:1080,height:1080,fit:'cover'})
+      .output({format:'image/jpeg',quality:92,background:'#ffffff'});
+    const bytes = await limitedBody(output.response().body,1_800_000);
+    return storeResult(request, env, selected, bytes);
+  }
+  const layout = FRAME_DEFINITIONS[selected];
   if (images.length !== 1 && images.length !== layout.slots.length) {
     // Return field names only, never tokens, image contents or user IDs.
     return json({error:{status:'INVALID_ARGUMENT',message:'Số ảnh không phù hợp với khung đã chọn.',received_fields:Object.keys(data).slice(0,30)}},422);
   }
-  const origin = new URL(request.url).origin;
   const background = await env.ASSETS.fetch(new URL('/assets/blank.png',origin));
   const frame = await env.ASSETS.fetch(new URL(layout.asset,origin));
   if (!background.ok || !background.body || !frame.ok || !frame.body) throw new Error('Missing deployed frame asset');
@@ -114,6 +134,11 @@ async function render(request: Request, env: Env): Promise<Response> {
   const output = await image.draw(overlay,{left:0,top:0}).output({format:'image/jpeg',quality:92,background:'#ffffff'});
   const result = output.response();
   const bytes = await limitedBody(result.body,1_800_000);
+  return storeResult(request, env, selected, bytes);
+}
+
+async function storeResult(request: Request, env: Env, selected: string, bytes: ArrayBuffer): Promise<Response> {
+  const origin = new URL(request.url).origin;
   const signature = new Uint8Array(bytes,0,Math.min(2,bytes.byteLength));
   if (signature.length !== 2 || signature[0] !== 0xff || signature[1] !== 0xd8) throw new Error('Image service did not return JPEG bytes');
   const id = crypto.randomUUID().replaceAll('-','');
@@ -134,7 +159,7 @@ export default {
   async fetch(request, env, ctx): Promise<Response> {
     const url = new URL(request.url);
     try {
-      if (request.method === 'GET' && url.pathname === '/health') return json({status:'ok',renderer:'photobooth-v7',filter_count:Object.keys(FRAME_DEFINITIONS).length,locket_compatibility:'experimental'});
+      if (request.method === 'GET' && url.pathname === '/health') return json({status:'ok',renderer:'photobooth-v7',filter_count:Object.keys(FRAME_DEFINITIONS).length+1,ai_model:WINTER_MODEL,ai_daily_limit:80,locket_compatibility:'experimental'});
       if (request.method === 'POST' && url.pathname === '/v1/relay-report') {
         await checkKey(request,env);
         const input = object(JSON.parse(new TextDecoder().decode(await limitedBody(request.body,2048))));
@@ -163,6 +188,10 @@ export default {
       if (request.method === 'GET') return env.ASSETS.fetch(request);
       return json({error:'Không tìm thấy đường dẫn.'},404);
     } catch (error) {
+      if (error instanceof WinterError) {
+        console.error(JSON.stringify({event:'ai_failed',code:error.code}));
+        return json({error:{message:error.message,code:error.code}},error.status);
+      }
       if (error instanceof ClientError) return json({error:{message:error.message}},error.status);
       const code = error && typeof error === 'object' && 'code' in error ? String(error.code) : 'RENDER_FAILED';
       console.error(JSON.stringify({event:'render_failed',code}));
@@ -173,6 +202,7 @@ export default {
   async scheduled(_event, env): Promise<void> {
     await env.RESULTS.batch([
       env.RESULTS.prepare('DELETE FROM results WHERE expires_at<=?').bind(Math.floor(Date.now()/1000)),
+      env.RESULTS.prepare('DELETE FROM ai_daily_usage WHERE day<?').bind(new Date(Date.now()-2*86400000).toISOString().slice(0,10)),
       env.RESULTS.prepare('DELETE FROM diagnostic_events WHERE created_ms<=?').bind(Date.now()-2*60*60*1000)
     ]);
   }

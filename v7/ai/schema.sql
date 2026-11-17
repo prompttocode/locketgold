@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS ai_daily_usage (
+  day TEXT PRIMARY KEY,
+  attempts INTEGER NOT NULL DEFAULT 0
+);

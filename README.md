@@ -13,9 +13,9 @@ Không đưa API key, chứng chỉ, cookie, dữ liệu người dùng hoặc s
 - Bỏ các filter cũ; giữ khung Vintage đã thử thành công và bổ sung ảnh người dùng cung cấp trong thư mục “Pb và khung”.
 - Đổi tên hiển thị của Vintage, bỏ chữ Namdz.
 - Giữ cách truyền ảnh của v6; lỗi xen kẽ thành công/thất bại chưa được sửa.
-- Chưa triển khai AI/Gemini.
+- Bổ sung hàng **AI → Mùa đông**, dùng Workers AI FLUX.2 klein 4B trên Cloudflare. Đã tạo/tải JPEG thành công ở server; giới hạn 80 lượt gọi/ngày cho cả dịch vụ. Chưa kiểm chứng thao tác trong Locket hoặc độ giữ khuôn mặt.
 
-V7 có **7 Photobooth và 8 khung**. Mã nguồn và hướng dẫn build ở [v7/README.md](v7/README.md). Chỉ danh sách filter thay đổi; các cấu hình ngoài phạm vi được giữ nguyên.
+V7 có **7 Photobooth, 8 khung và 1 filter AI**. Mã nguồn và hướng dẫn build ở [v7/README.md](v7/README.md). Các cấu hình ngoài phạm vi được giữ nguyên.
 
 Theo cập nhật tiếp theo, v7 tắt thêm nút tạo diện mạo riêng bằng các cờ `allows_custom_filters`; 15 mẫu preset vẫn được giữ.
 
