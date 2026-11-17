@@ -1,5 +1,15 @@
 # Ghi nhớ dự án
 
+## V7.1 chẩn đoán riêng — 17/11/2026
+
+- Đã deploy `c0dd8411-cb1e-452a-a3e7-2d0397e51007` bằng `v7.1/wrangler.jsonc`; handler giữ nguyên snapshotV7, chỉ thêm3staticassetdebug. V7modulevàscriptsvẫnđượcgiữ.
+
+- Người dùng yêu cầu tách V7.1 và giữ V7 đang ổn. Nguồn nằm ở `v7.1/`, Worker src snapshot byte-identical V7; chỉ thêm module/request wrapper/response observer log cục bộ. Không sửa thuật toán, headers, body/method, chọn filter hoặc response củaV7.
+- `v7.1/build.py` copy union tài nguyên `v7/public`, giữ mọiURL V7, tạoURLmodule `Locket-Photobooth-v7.1-*` riêng. `v7.1/private/links.json` ghi link và hash stable; public/private/dev.vars bỏ quaGit. Chỉ build sau khi có tài nguyên V7 cục bộ.
+- Console prefix `NAMDZDBG`: request (body type/length, MIME/encoding), decode_error, decision(rewritten), response(status,header markers). Không log ảnh, URL ảnh, querytoken, request/response body, Authorization, Cookie. Không cóHTTPbeacon. Observer `$done({})` giữresponse.
+- `v7.1/test.mjs` xác nhận87 trường hợp quyết định/body/method/headers giốngV7, responsekhôngđổi, khôngròsentinel, khônggọiHTTP, mọiassetV7khôngđổi. TypeScript và testV7pass.
+- LogConsole mới người dùng gửi11:14:21: taskE914… timeout70s, gửi1695bytebody, HTTP502sau283ms,response_bytes237,FilterClient.FilterError0ngaysauđó. Lầnkếtiếpbackendlưuảnh11:15:07,234.797bytes. Chưa xác địnhnguồn502; khôngđượcgọiđâylàtimeoutAI. Không thấyPOST11:14trongdashboardHTTPrequests khiđốichiếu; cầnclientdebugphânbiệtparse/rewrite/gateway.
+
 ## Điều tra lỗi xen kẽ và push AI — 17/11/2026
 
 - Đã push bản AI hiện tại lên `origin/main`, commit `49ca5cc08a62b5ad900a1b506f4315ca5e9cb2be`. Secret scan đối chiếu LAB_KEY với cả 15 file commit (gồm PNG) pass; không push module chứa khóa hoặc ảnh thử/private.
