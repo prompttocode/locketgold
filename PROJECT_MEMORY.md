@@ -1,5 +1,14 @@
 # Ghi nhớ dự án
 
+## Điều tra lỗi xen kẽ và push AI — 17/11/2026
+
+- Đã push bản AI hiện tại lên `origin/main`, commit `49ca5cc08a62b5ad900a1b506f4315ca5e9cb2be`. Secret scan đối chiếu LAB_KEY với cả 15 file commit (gồm PNG) pass; không push module chứa khóa hoặc ảnh thử/private.
+- Người dùng xác nhận thử 2 lần: lần đầu lỗi, lần sau được.
+- Dashboard Observability dataset HTTP requests, lọc Path=/generateFilteredImage và làm mới: lần client mới nhất thấy POST lúc 10:59:44 VN trả 200; GET JPEG kết quả lúc10:59:51 trả200. D1 cùng thời điểm lưu273.473bytes. Không đọc/nạp ảnh người dùng để phân tích; chỉ dùng metadata.
+- Từ10:58 đến11:00 chỉ thấy một POST tạo ảnh vào server. GET script native v7 lúc10:59:23 trả200, có thể liên quan lần lỗi nhưng chưa có bằng chứng xác định. Không lấy việc thiếu log làm chứng minh tuyệt đối request chưa tới server. Worker execution logs đang sampling10%; tokenWrangler thiếu quyền Workers Observability Write nên truy vấnAPI lịch sử403. Dashboard cóHTTP requests dataset để đối chiếu.
+- Source suspect cụ thể: `v7/templates/native-v7.js` dòng17 bắt mọi lỗi decode mà không log; selectedfalse ởdòng21 dẫn `$done({})`, request đi tiếp vềAPI gốc. Điều này có thể giải thích lỗi không xuất hiện ởbackend nếu requestbody thay đổi định dạng/không đọcđược, nhưng chưa xác nhận đó là lỗi lần này. Cần log console Shadowrocket của đúng lầnlỗi để phân biệt decodefail, nonmatchingID hoặc lỗiđổiđíchkết nối. Chưa sửa routing/deploy để tránh làm mất bảnđangdùngđược.
+- Các ghi chú bên dưới nói AI chưapush là lịch sử trướccommit49ca5cc.
+
 ## Mới nhất: chuyển AI sang Cloudflare miễn phí — 17/11/2026
 
 - Người dùng đã yêu cầu chuyển khỏi Gemini vì không muốn trả phí. Worker đang chạy `e55717f8-59f4-4814-b6ba-e720cb4d5e2d`, có binding `AI`.
