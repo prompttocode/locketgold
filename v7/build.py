@@ -144,25 +144,38 @@ def main():
         camera[field] = [f['uid'] for f in filters]
     for field in ['remote_filters', 'remoteFilters', 'filters']:
         camera[field] = copy.deepcopy(filters)
-    # Ice.png is an icon only; the captured photo is the AI input.
-    ai_icon = PUBLIC / 'assets/v7/ai-winter-icon.png'
-    winter_icon = Image.open(ROOT / 'ai/Ice.png').convert('RGB')
-    winter_icon.thumbnail((256, 256), Image.Resampling.LANCZOS)
-    winter_icon.save(ai_icon)
-    ai = copy.deepcopy(prototype)
-    ai.update(uid='ai_winter', id='ai_winter', name='Mùa đông', category='AI', prompt='ai_winter')
-    icon_url = ORIGIN + '/assets/v7/ai-winter-icon.png'
-    for field in ['imageUrl', 'overlayImageUrl', 'overlayImageURL', 'iconUrl']:
-        ai[field] = icon_url
-    for field in ['url', 'iconUrl', 'remoteImage']:
-        ai['icon'][field] = icon_url
-    ai['icon'].update(sfSymbol='snowflake', symbol='snowflake', emoji='❄️')
+    # These local images are icons only; the captured photograph is the AI input.
+    ai_filters = []
+    luxury_icon_name = 'ai-luxury-icon-' + hashlib.sha256((ROOT / 'ai/vest.png').read_bytes()).hexdigest()[:12] + '.png'
+    grab_icon_name = 'ai-grab-icon-' + hashlib.sha256((ROOT / 'ai/grab.jpg').read_bytes()).hexdigest()[:12] + '.png'
+    bee_icon_name = 'ai-bee-icon-' + hashlib.sha256((ROOT / 'ai/bee.jpeg').read_bytes()).hexdigest()[:12] + '.png'
+    for uid, label, source, asset, symbol, emoji in [
+        ('ai_winter', 'Mùa đông', 'Ice.png', 'ai-winter-icon.png', 'snowflake', '❄️'),
+        ('ai_luxury', 'Sang trọng', 'vest.png', luxury_icon_name, 'sparkles', '✨'),
+        ('ai_grab', 'Grab', 'grab.jpg', grab_icon_name, 'motorcycle', '🟢'),
+        ('ai_bee', 'Bee', 'bee.jpeg', bee_icon_name, 'motorcycle', '🟡'),
+    ]:
+        icon = Image.open(ROOT / 'ai' / source).convert('RGBA' if uid == 'ai_luxury' else 'RGB')
+        icon.thumbnail((256, 256), Image.Resampling.LANCZOS)
+        icon.save(PUBLIC / 'assets/v7' / asset)
+        if uid == 'ai_luxury':
+            # Old cached catalogs also receive the replacement image at their old URL.
+            shutil.copy2(PUBLIC / 'assets/v7' / asset, PUBLIC / 'assets/v7/ai-luxury-icon.png')
+        ai = copy.deepcopy(prototype)
+        ai.update(uid=uid, id=uid, name=label, category='AI', prompt=uid)
+        icon_url = ORIGIN + '/assets/v7/' + asset
+        for field in ['imageUrl', 'overlayImageUrl', 'overlayImageURL', 'iconUrl']:
+            ai[field] = icon_url
+        for field in ['url', 'iconUrl', 'remoteImage']:
+            ai['icon'][field] = icon_url
+        ai['icon'].update(sfSymbol=symbol, symbol=symbol, emoji=emoji)
+        ai_filters.append(ai)
     for field in ['sheet_filters', 'sheetFilters']:
-        camera[field].append({'title': {'en': 'AI', 'vi': 'AI'}, 'filter_ids': ['ai_winter']})
+        camera[field].append({'title': {'en': 'AI', 'vi': 'AI'}, 'filter_ids': [ai['uid'] for ai in ai_filters]})
     for field in ['picker_filters', 'pickerFilters']:
-        camera[field].append('ai_winter')
+        camera[field].extend(ai['uid'] for ai in ai_filters)
     for field in ['remote_filters', 'remoteFilters', 'filters']:
-        camera[field].append(copy.deepcopy(ai))
+        camera[field].extend(copy.deepcopy(ai_filters))
     payload['entries']['camera_filter_config'] = compact(camera)
     (PUBLIC / 'config/v7.json').write_text(compact(payload))
     (ROOT / 'catalog.json').write_text(json.dumps(report, ensure_ascii=False, indent=2))
@@ -179,7 +192,7 @@ def main():
     dev_vars.chmod(0o600)
     suffix = hashlib.sha256(key.encode()).hexdigest()[:32]
     module_suffix = hashlib.sha256(('v7-module:' + key).encode()).hexdigest()[:32]
-    supported = list(definitions) + ['namdz_vintage', 'ai_winter']
+    supported = list(definitions) + ['namdz_vintage'] + [ai['uid'] for ai in ai_filters]
     selector = compact(supported) + '.includes(id)||' + compact(supported) + '.some(function(value){return JSON.stringify(data).indexOf(JSON.stringify(value))>=0;})'
     native = (ROOT / 'templates/native-v7.js').read_text().replace('__KEY__', compact(key)).replace('__SERVER__', compact(ORIGIN)).replace('__SELECT_FILTER__', selector)
     native_name = 'native-v7-' + suffix + '-' + hashlib.sha256(native.encode()).hexdigest()[:12] + '.js'
@@ -188,7 +201,7 @@ def main():
     (PUBLIC / 'modules' / ('observe-v6-' + suffix + '.js')).write_text(observer)
 
     module = '''#!name=Locket Photobooth V7
-#!desc=7 Photobooth + 8 khung + AI Mùa đông; giữ cách truyền ảnh của V6.
+#!desc=7 Photobooth + 8 khung + AI Mùa đông, Sang trọng, Grab và Bee; giữ cách truyền ảnh của V6.
 
 [Script]
 locket_config_v7 = type=http-response,pattern=^https:\\/\\/firebaseremoteconfig\\.googleapis\\.com\\/v1\\/projects\\/(locket-4252a|641029076083)\\/namespaces\\/firebase(:|%3A)fetch,requires-body=1,max-size=0,script-path=__ORIGIN__/modules/__CONFIG__
@@ -205,7 +218,7 @@ hostname = %APPEND% firebaseremoteconfig.googleapis.com, api.locketcamera.com, u
     private = ROOT / 'private'
     private.mkdir(exist_ok=True, mode=0o700)
     (private / 'links.json').write_text(json.dumps({'module': ORIGIN + '/modules/' + module_name}, indent=2))
-    print('Built 16 filters: 7 Photobooth + 8 Khung + AI Mùa đông; custom-look creation disabled.')
+    print('Built 19 filters: 7 Photobooth + 8 Khung + AI Mùa đông/Sang trọng/Grab/Bee; custom-look creation disabled.')
 
 
 if __name__ == '__main__':

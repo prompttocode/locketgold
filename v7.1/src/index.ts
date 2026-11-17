@@ -1,6 +1,6 @@
 import {FRAME_DEFINITIONS} from './frames';
 import {Buffer} from 'node:buffer';
-import {WINTER_ID, WINTER_MODEL, WinterError, generateWinter} from './winter';
+import {AI_PROMPTS, aiFilterId, WINTER_MODEL, WinterError, generateWinter} from './winter';
 
 type FrameId = keyof typeof FRAME_DEFINITIONS;
 
@@ -86,12 +86,14 @@ async function render(request: Request, env: Env): Promise<Response> {
   catch (error) { if (error instanceof ClientError) throw error; throw new ClientError('JSON không hợp lệ.'); }
   const data = body.data === undefined ? body : object(body.data);
   const requested = data.filter_id ?? data.filterId ?? data.filter_uid ?? data.filterUid ?? data.prompt ?? 'pb_vintage';
-  const selected = requested === WINTER_ID ? WINTER_ID : frameId(requested);
+  const selectedAi = aiFilterId(requested);
+  const selectedFrame = frameId(requested);
+  const selected = selectedAi ?? selectedFrame;
   if (!selected) throw new ClientError('Không có khung này trong bộ sưu tập.',422);
   const source = data.images ?? data.image_url ?? data.imageUrl ?? data.input_image_url ?? data.inputImageUrl ?? data.image;
   const images = Array.isArray(source) ? source : source ? [source] : [];
   const origin = new URL(request.url).origin;
-  if (selected === WINTER_ID) {
+  if (selectedAi) {
     if (images.length !== 1 || typeof images[0] !== 'string') throw new ClientError('AI cần đúng một ảnh đầu vào.',422);
     const blob = await sourceImage(images[0], origin, env);
     const input = images[0].startsWith('data:')
@@ -101,14 +103,15 @@ async function render(request: Request, env: Env): Promise<Response> {
       .transform({width:512,height:512,fit:'contain'})
       .output({format:'image/jpeg',quality:95,background:'#ffffff'});
     const referenceBytes = new Uint8Array(await limitedBody(reference.response().body,1_800_000));
-    const generated = await generateWinter(referenceBytes, env);
+    const generated = await generateWinter(referenceBytes, env, selectedAi);
     const output = await env.IMAGES.input(new Blob([new Uint8Array(generated)]).stream())
       .transform({width:1080,height:1080,fit:'cover'})
       .output({format:'image/jpeg',quality:92,background:'#ffffff'});
     const bytes = await limitedBody(output.response().body,1_800_000);
     return storeResult(request, env, selected, bytes);
   }
-  const layout = FRAME_DEFINITIONS[selected];
+  if (!selectedFrame) throw new ClientError('Không có khung này trong bộ sưu tập.',422);
+  const layout = FRAME_DEFINITIONS[selectedFrame];
   if (images.length !== 1 && images.length !== layout.slots.length) {
     // Return field names only, never tokens, image contents or user IDs.
     return json({error:{status:'INVALID_ARGUMENT',message:'Số ảnh không phù hợp với khung đã chọn.',received_fields:Object.keys(data).slice(0,30)}},422);
@@ -159,7 +162,7 @@ export default {
   async fetch(request, env, ctx): Promise<Response> {
     const url = new URL(request.url);
     try {
-      if (request.method === 'GET' && url.pathname === '/health') return json({status:'ok',renderer:'photobooth-v7',filter_count:Object.keys(FRAME_DEFINITIONS).length+1,ai_model:WINTER_MODEL,ai_daily_limit:80,locket_compatibility:'experimental'});
+      if (request.method === 'GET' && url.pathname === '/health') return json({status:'ok',renderer:'photobooth-v7',filter_count:Object.keys(FRAME_DEFINITIONS).length+Object.keys(AI_PROMPTS).length,ai_model:WINTER_MODEL,ai_daily_limit:80,locket_compatibility:'experimental'});
       if (request.method === 'POST' && url.pathname === '/v1/relay-report') {
         await checkKey(request,env);
         const input = object(JSON.parse(new TextDecoder().decode(await limitedBody(request.body,2048))));

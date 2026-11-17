@@ -20,12 +20,19 @@ assert.deepEqual(config.sheet_filters, config.sheetFilters);
 assert.deepEqual(config.remote_filters, config.remoteFilters);
 assert.deepEqual(config.remote_filters, config.filters);
 assert.deepEqual(config.picker_filters, config.pickerFilters);
-assert.equal(config.remote_filters.length, 16);
-assert.equal(new Set(config.picker_filters).size, 16);
+assert.equal(config.remote_filters.length, 19);
+assert.equal(new Set(config.picker_filters).size, 19);
 assert.equal(config.sheet_filters[0].filter_ids.length, 7);
 assert.equal(config.sheet_filters[1].filter_ids.length, 8);
-assert.deepEqual(config.sheet_filters[2].filter_ids, ['ai_winter']);
+assert.deepEqual(config.sheet_filters[2].filter_ids, ['ai_winter', 'ai_luxury', 'ai_grab', 'ai_bee']);
 assert.equal(config.remote_filters.find(f => f.uid === 'ai_winter').name, 'Mùa đông');
+const luxury = config.remote_filters.find(f => f.uid === 'ai_luxury');
+assert.equal(luxury.name, 'Sang trọng');
+assert.match(luxury.iconUrl,/\/ai-luxury-icon-[a-f0-9]{12}\.png$/);
+for(const [id,name,prefix] of [['ai_grab','Grab','grab'],['ai_bee','Bee','bee']]){
+  const item=config.remote_filters.find(f=>f.uid===id);assert.equal(item.name,name);
+  assert.match(item.iconUrl,new RegExp('/ai-'+prefix+'-icon-[a-f0-9]{12}\\.png$'));
+}
 assert.equal(config.remote_filters[0].name, 'Vintage 2×2');
 assert(!/Namdz|NAMDZ|Trò Chơi|AI 3D/i.test(JSON.stringify(config.sheet_filters)));
 assert(!/Namdz|NAMDZ/i.test(config.remote_filters.map(f => f.name).join(',')));
@@ -92,4 +99,4 @@ for (const name of fs.existsSync(oldModules) ? fs.readdirSync(oldModules).filter
   const after = fs.readFileSync(new URL('public/modules/' + name, root));
   assert.equal(crypto.createHash('sha256').update(before).digest('hex'), crypto.createHash('sha256').update(after).digest('hex'));
 }
-console.log('PASS: 16 filters, three groups, 80 routing cases, zero diagnostic requests, binary input, V6 assets unchanged.');
+console.log('PASS: 19 filters, three groups, 95 routing cases, zero diagnostic requests, binary input, V6 assets unchanged.');

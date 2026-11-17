@@ -5,7 +5,7 @@ const root=new URL('.',import.meta.url);
 const key=JSON.parse(fs.readFileSync(new URL('../.lab-secrets.json',root),'utf8')).LAB_KEY;
 const origin='https://namdz-photobooth.namvu3121.workers.dev';
 const health=await (await fetch(origin+'/health')).json();
-assert.equal(health.filter_count,16);
+assert.equal(health.filter_count,19);
 const links=JSON.parse(fs.readFileSync(new URL('private/links.json',root),'utf8'));
 const moduleResponse=await fetch(links.module);
 assert.equal(moduleResponse.status,200);
@@ -18,7 +18,9 @@ for (const match of module.matchAll(/script-path=(https:\/\/[^\s,]+)/g)) {
 assert.equal((await fetch(origin+'/assets/v7/ai-winter-icon.png')).status,200);
 const records=[];
 const reference = process.argv[2];
-const filters = reference ? ['ai_winter'] : ['pb_vintage','ai_winter'];
+const aiFilter = process.argv[3] || 'ai_winter';
+assert(['ai_winter','ai_luxury','ai_grab','ai_bee'].includes(aiFilter));
+const filters = reference ? [aiFilter] : ['pb_vintage',aiFilter];
 for (const id of filters) {
   const start=Date.now();
   const response=await fetch(origin+'/generateFilteredImage',{
@@ -37,7 +39,7 @@ for (const id of filters) {
     fs.writeFileSync(new URL('private/'+id+'-live.jpg',root),bytes,{mode:0o600});
     record.jpeg_bytes=bytes.length;
   } else {
-    assert.equal(id,'ai_winter');
+    assert(['ai_winter','ai_luxury','ai_grab','ai_bee'].includes(id));
     assert.equal(response.status,429);
     assert(['AI_DAILY_LIMIT','AI_CLOUDFLARE_QUOTA'].includes(result.error.code));
   }

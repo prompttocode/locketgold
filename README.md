@@ -10,6 +10,8 @@ Không đưa API key, chứng chỉ, cookie, dữ liệu người dùng hoặc s
 
 Ngày 17/11/2026, người dùng xác nhận V7.4 đã chạy được trên iPhone và chọn bản này. Mã nguồn, giới hạn và hướng dẫn nằm trong [v7.4/README.md](v7.4/README.md).
 
+Bổ sung cùng ngày: hàng **AI** hiện có **Mùa đông, Sang trọng, Grab và Bee**. Sang trọng dùng icon trong suốt `v7/ai/vest.png`; Grab/Bee dùng `v7/ai/grab.jpg` và `v7/ai/bee.jpeg`. Ba hiệu ứng trang phục yêu cầu giữ nguyên cảnh xung quanh. Tổng cộng 19 filters; bốn chế độ AI dùng chung 80 lượt/ngày trên mỗi tài khoản triển khai. Mô hình, ảnh tham chiếu 512px và JPEG đầu ra 1080px giữ nguyên; không tuyên bố ảnh đầu ra 4K hoặc giữ khuôn mặt/bối cảnh tuyệt đối. Mô tả prompt áo tham khảo ở [uniform-prompts.md](v7/ai/uniform-prompts.md).
+
 V7.4 giữ cấu hình/filter và native rewrite của V7. Khi gặp đúng mẫu lỗi gateway 502 đã ghi nhận, response script gọi Worker độc lập một lần rồi thay phản hồi lỗi bằng kết quả. Không gửi request mồi; không dùng đường early response của V7.2. Phản hồi thành công, lỗi quota và lỗi JSON của Worker không bị thử lại.
 
 Các lệnh mặc định dùng V7.4: `npm run build`, `npm test`, `npm run check`, `npm run deploy`. Build lần lượt tạo tài nguyên V7 → V7.1 → V7.2 → V7.3 → V7.4 để giữ nguyên các URL cũ; V7.2/V7.3 chỉ được lưu làm lịch sử thử nghiệm. Các tệp sinh có khóa vẫn bị Git bỏ qua. Worker handler hiện tại là snapshot tại `v7.1/src/`.
@@ -25,7 +27,7 @@ Các lệnh mặc định dùng V7.4: `npm run build`, `npm test`, `npm run chec
 - Giữ cách truyền ảnh của v6; lỗi xen kẽ thành công/thất bại chưa được sửa.
 - Bổ sung hàng **AI → Mùa đông**, dùng Workers AI FLUX.2 klein 4B trên Cloudflare. Đã tạo/tải JPEG thành công ở server; giới hạn 80 lượt gọi/ngày cho cả dịch vụ. Chưa kiểm chứng thao tác trong Locket hoặc độ giữ khuôn mặt.
 
-V7 có **7 Photobooth, 8 khung và 1 filter AI**. Mã nguồn và hướng dẫn build ở [v7/README.md](v7/README.md). Các cấu hình ngoài phạm vi được giữ nguyên.
+V7 có **7 Photobooth, 8 khung và 4 filters AI**. Mã nguồn và hướng dẫn build ở [v7/README.md](v7/README.md). Các cấu hình ngoài phạm vi được giữ nguyên.
 
 Theo cập nhật tiếp theo, v7 tắt thêm nút tạo diện mạo riêng bằng các cờ `allows_custom_filters`; 15 mẫu preset vẫn được giữ.
 

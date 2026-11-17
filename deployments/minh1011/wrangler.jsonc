@@ -1,0 +1,38 @@
+{
+	"$schema": "../../node_modules/wrangler/config-schema.json",
+	"name": "locket-photobooth",
+	"account_id": "3af454bb633da80ba0e33d853e1aa4cc",
+	"main": "../../v7.1/src/index.ts",
+	"compatibility_date": "2026-11-16",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"workers_dev": true,
+	"ai": {
+		"binding": "AI"
+	},
+	"assets": {
+		"directory": "./public",
+		"binding": "ASSETS",
+		"run_worker_first": true
+	},
+	"images": {
+		"binding": "IMAGES"
+	},
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 0.1
+	},
+	"triggers": {
+		"crons": [
+			"*/5 * * * *"
+		]
+	},
+	"d1_databases": [
+		{
+			"binding": "RESULTS",
+			"database_name": "locket-photobooth-results",
+			"database_id": "5e15b045-7c6e-4b1e-97ce-162d5ab7adbb"
+		}
+	]
+}

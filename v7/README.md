@@ -1,6 +1,18 @@
 # Photobooth v7
 
-Ba nhóm hiện tại: **Photobooth** (7 PNG tên `pb_`, một ảnh lặp bốn ô), **Khung** (8 PNG phủ lên một ảnh) và **AI** (Mùa đông). Không có nhóm AI 3D cũ hoặc trò chơi trong danh sách filter v7.
+Ba nhóm hiện tại: **Photobooth** (7 PNG tên `pb_`, một ảnh lặp bốn ô), **Khung** (8 PNG phủ lên một ảnh) và **AI** (Mùa đông, Sang trọng, Grab, Bee). Không có nhóm AI 3D cũ hoặc trò chơi trong danh sách filter v7.
+
+## Bổ sung Grab và Bee — 2026-11-17
+
+`ai_grab` tên **Grab**, icon `ai/grab.jpg`; `ai_bee` tên **Bee**, icon `ai/bee.jpeg`. Prompt mô tả đúng các màu, khóa kéo, logo, dải phản quang và vị trí cờ theo ảnh áo người dùng gửi; chỉ thay áo, giữ người và cảnh gốc. Chữ trên áo Bee là `be` viết thường. Xem [mô tả tiếng Việt](ai/uniform-prompts.md); prompt thực thi nằm trong `src/winter.ts`.
+
+Cả bốn AI dùng chung một bộ đếm80 lượt/ngày trên mỗi tài khoản. Pipeline vẫn nhận một ảnh chụp, không gửi ảnh áo làm tham chiếu thứ hai; logo/chi tiết không được bảo đảm chính xác tuyệt đối bằng prompt. Tổng19 filters; backend/selector/catalog nhận cả hai ID mới, các biến thể snake/camel được giữ đồng bộ. Không đổi hồi phục V7.4.
+
+## Bổ sung Sang trọng — 2026-11-17
+
+`ai_luxury` tên **Sang trọng**, icon trong suốt từ `ai/vest.png` do người dùng cung cấp (thay vest.jpg). Icon chỉ để hiển thị, không dùng làm ảnh tham chiếu của người chụp. URL icon có hash nội dung để tránh cache bản cũ; URL legacy ai-luxury-icon.png cũng phục vụ ảnh mới. Prompt trong `LUXURY_PROMPT` yêu cầu thời trang cao cấp, trang phục phù hợp phong cách từng người, giữ danh tính/khuôn mặt/kiểu tóc/tư thế/tỷ lệ và **giữ nguyên bối cảnh gốc**. Không chuyển sang địa điểm khác, không thêm/bớt/đổi vị trí đồ vật hoặc đổi màu/ánh sáng toàn cảnh; chỉ điều chỉnh trang phục để khớp ánh sáng sẵn có. Không đoán danh tính giới từ ảnh; khi phong cách chưa rõ ưu tiên bộ đồ thanh lịch trung tính.
+
+`AI_PROMPTS` chọn prompt cố định bằng ID filter, không nhận prompt tùy ý từ client. Hai chế độ dùng chung model FLUX.2 klein 4B, một bộ đếm 80 lượt/ngày trên mỗi tài khoản; không cộng thêm quota riêng. Đầu ra thực tế vẫn 1024px từ AI và JPEG chuẩn hóa 1080px, không phải 4K. V7.4 pending/recovery templates giữ nguyên; native selector được thêm ID mới. Bản chính và bản Minh được cập nhật cùng tính năng, module URL giữ nguyên.
 
 ## Bổ sung AI Mùa đông — 2026-11-17
 

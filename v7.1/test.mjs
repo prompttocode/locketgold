@@ -61,4 +61,4 @@ for(const name of fs.readdirSync(new URL('../v7/public/modules/',root))){
  assert.deepEqual(fs.readFileSync(new URL('public/modules/'+name,root)),fs.readFileSync(new URL('../v7/public/modules/'+name,root)));
 }
 for(const name of ['index.ts','winter.ts','frames.ts'])assert.equal(read('src/'+name),read('../v7/src/'+name));
-console.log('PASS: V7.1 matches V7 routing for 87 cases, never logs private fields or sends telemetry; response unchanged; stable V7 assets/code preserved.');
+console.log('PASS: V7.1 matches V7 routing for all configured filters and body variants, never logs private fields or sends telemetry; response unchanged; stable V7 assets/code preserved.');

@@ -32,3 +32,7 @@ v7.4/public/
 v7.4/private/
 v7.4/.wrangler/
 v7.4/.dev.vars
+deployments/*/public/
+deployments/*/private/
+deployments/*/.wrangler/
+deployments/*/.dev.vars

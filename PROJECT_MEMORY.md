@@ -1,5 +1,54 @@
 # Ghi nhớ dự án
 
+## Chốt push bổ sung AI — 17/11/2026
+
+- Người dùng yêu cầu push trạng thái hiện tại lên GitHub: Sang trọng giữ cảnh gốc + vest.png trong suốt, Grab/Bee và bốn AI dùng chung quota; kèm nguồn triển khai độc lập cho tài khoản Minh.
+- Chỉ đưa source, tài liệu, tests và các icon người dùng yêu cầu vào commit. Không đưa key/token, module đã nhúng key, private/, ảnh thử, log hoặc tài nguyên public sinh tự động vào Git. Không đưa các thử nghiệm root chưa theo dõi từ trước vào commit.
+- Bộ kiểm tra19filters/95routes, prompt dispatch/quota/input, hồi phụcV7.4 300cặp, TypeScript và so sánh bản Minh đã pass ở lượt triển khai Grab/Bee. Chỉ push Git, không deploy lại hoặc đổi link module trong lượt này.
+- Các câu “chưa push” ở các mục lịch sử bên dưới là trạng thái trước lần chốt này.
+
+## Grab và Bee — 17/11/2026
+
+- Người dùng yêu cầu thêm áo Grab, sau đó bổ sung áo be trong lúc đang làm; đã giữ cả hai yêu cầu và triển khai cùng lượt. Tên filter **Grab** (`ai_grab`) và **Bee** (`ai_bee`), icon từ `/Users/namdeptrai/Downloads/grab.jpg` và `/Users/namdeptrai/Downloads/bee.jpeg`, sao chép vào `v7/ai/`. Đã xem cả hai icon và ảnh áo trong hội thoại.
+- GRAB_PROMPT mô tả áo gió xanh lá sáng + dải xanh rừng đậm giữa ngực/bắp tay, cổ đứng, khóa xanh, logo Grab trắng viền ở ngực trái và dọc cẳng tay, dải phản quang bạc gần khuỷu, cờ Việt Nam ở bắp tay phải. BEE_PROMPT mô tả thân/tay vàng, vai/ngực trên/cổ xanh royal/cobalt, khóa vàng, cổ tay/gấu xanh, hai túi khóa dọc viền xanh, chữ be vàng ngực trái, chữ be xanh cẳng tay, cờ Việt Nam ở bắp tay trái. Tên UI Bee nhưng chữ trên áo là `be`, không viết Bee.
+- UNIFORM_PHOTO_RULES yêu cầu chỉ thay áo người/nhóm tiền cảnh, giữ danh tính/khuôn mặt/tư thế/tay/tỷ lệ/quần/giày và toàn bộ cảnh gốc; không tự thêm xe/mũ/đổi cảnh. Ảnh áo chỉ để viết mô tả, **không gửi làm tham chiếu thứ hai**. Icon cũng không dùng làm ảnh input. Prompt không bảo đảm chữ/logo hoặc mọi pixel chính xác tuyệt đối; chưa có portrait/UI test.
+- Catalog hiện19 filters:7Photobooth+8Khung+4AI (Mùa đông, Sang trọng, Grab, Bee), đủ snake/camel/picker/remote aliases. AI_PROMPTS registry nhận4 ID; index/health tự đếm4AI. Bốn filter dùng chung80 lượt/ngày/account, không đổi model/schema/keys/module URLs hoặc V7.4 recovery templates.
+- Prompt tiếng Việt để người dùng xem tại `v7/ai/uniform-prompts.md`; thực thi English tại v7/src/winter.ts và snapshotv7.1. Icon content-hash: ai-grab-icon-4818b3040799.png, ai-bee-icon-e7782eae70e7.png, mỗi256x256. File nguồn giữ nguyên bytes người dùng cung cấp.
+- Build/test/check/main&Minh source comparison pass:95 routes, prompt dispatch/input/shared cap, regressionV7.4 300cặp và bộ khác. Deploy Nam `e505d500-5b40-4edd-b847-f42f21f0191c`, Minh `fd868a4f-79ca-4e77-bfef-f142580c90fb`.
+- Live qua V7.4 response recovery với ảnh mẫu màu trơn: Grab trên Nam200/JPEG99037bytes,7835ms; Bee trên Minh200/JPEG135617bytes,18426ms; đúng1POST mỗi lượt. Module/3scripts hash,4AIrow và health19/icon fetch pass trên cả2server. Kiểm tra này xác nhận pipeline, không xác nhận độ chính xác áo trên người thật hoặc iPhone. Kết quả dưới private/ không commit. Chưa push source lượt này.
+- Bối cảnh cập nhật Shadowrocket: người dùng nói nút Modules nhưng ảnh15:13 là menu tệp `.conf`; chứng chỉ/công tắc vẫn còn. Xóa module/thêm lại và chứng chỉ, cài lại Locket thì nhận cấu hình được. Chưa có PacketTunnel của lúc cập nhật hỏng để chốt cache/script/profile nào lỗi. Không khẳng định đổi link cần chứng chỉ mới hoặc cập nhật chắc chắn làm mất chứng chỉ. Filter mới cần Locket tải lại catalog; thay prompt backend áp dụng ngay cho ID đã có.
+
+## Sang trọng: PNG mới và giữ nguyên cảnh — 17/11/2026
+
+- Người dùng yêu cầu thay icon vest cũ bằng `/Users/namdeptrai/Downloads/vest.png` và thêm yêu cầu giữ nguyên cảnh xung quanh. Đã xem ảnh PNG trong suốt; sao chép nguyên bản thành `v7/ai/vest.png`, bỏ bản nguồn icon `v7/ai/vest.jpg` khỏi dự án (không xóa ảnh gốc trong Downloads).
+- Builder luxury giữ RGBA, thumbnail244×256 alpha0..255; icon mới có URL hash `ai-luxury-icon-9afd1628e1bf.png`,37656bytes. URL cũ `/assets/v7/ai-luxury-icon.png` cũng phục vụ cùng PNG mới để tương thích catalog đang lưu; không dùng icon làm ảnh tham chiếu AI.
+- LUXURY_PROMPT ở v7/src và v7.1/src yêu cầu chỉ thay trang phục, giữ chính xác cảnh gốc, vật thể/vị trí/camera/màu/ánh sáng nền; bỏ yêu cầu tự chọn khách sạn/cung điện/studio. Trang phục mới khớp ánh sáng sẵn có, không relight toàn cảnh. Không bảo đảm đầu ra pixel-identical chỉ bằng prompt; không thêm mask/segmentation hoặc đổi provider. Winter, quota80 và V7.4 recovery templates không thay đổi.
+- Tests/build/TypeScript và so sánh nguồn bản Minh pass; kiểm tra PNG alpha và legacy alias pass. Không chạy thêm inference AI trong lượt sửa prompt/icon này; test xác nhận prompt dispatch/background requirements, không khẳng định đã kiểm chứng giữ bối cảnh trên chân dung.
+- Deploy cả hai server: Nam `fb59f3c7-c74d-4a9e-853b-4f614eb88cc2`; Minh `58ee0859-5357-4341-a5f7-f46e303d0dba`. Module URL/key/UID ai_luxury giữ nguyên. Remote module/3scripts được đối chiếu hash và icon mới/legacy bytes trùng nguồn trên cả hai account, đều200.
+- Prompt mới áp dụng tại server cho các lượt Sang trọng tiếp theo, không cần cấu hình mới chỉ để đổi prompt. Icon có thể cần Locket nhận lại catalog hoặc hết cache; không bảo người dùng tạo lại chứng chỉ chỉ vì đổi icon/linkscript.
+
+## AI Sang trọng — 17/11/2026
+
+- Người dùng yêu cầu thêm filter **Sang trọng**, icon `/Users/namdeptrai/Downloads/vest.jpg`, prompt thay trang phục thành đồ dự tiệc cao cấp và cảnh sang trọng, ưu tiên bảo toàn khuôn mặt/danh tính/kiểu tóc/tư thế/tỷ lệ. Đã xem ảnh icon: ảnh áo ghi-lê, sao chép thành `v7/ai/vest.jpg`; chỉ làm icon, không dùng làm ảnh tham chiếu.
+- Đã cập nhật cả bản Nam và bản Minh (đã thông báo phạm vi này trước khi làm). ID `ai_luxury`, cùng hàng AI với `ai_winter`, tổng17 filters. Mọi biến thể snake/camel, picker, remote_filters, native selector đều thêm ID mới. 15 mẫu frame/PB và prompt Mùa đông giữ nguyên.
+- `v7/src/winter.ts` và `v7.1/src/winter.ts` có AI_PROMPTS, aiFilterId và LUXURY_PROMPT. Server chỉ chọn prompt cố định theo ID; không nhận prompt tùy ý. Prompt chọn trang phục theo phong cách hiển thị, không đoán danh tính giới. Không cam kết bảo toàn danh tính tuyệt đối; không tuyên bố xuất4K. Model vẫn FLUX.2 klein4B, tham chiếu512px, outputAI1024 rồi JPEG1080.
+- Hai AI dùng chung một bộ đếm80 lượt/ngày trong D1 của mỗi tài khoản; không tăng quota và không đổi schema. `v7/src/index.ts`/snapshotV7.1 route cả hai AI qua cùng pipeline; health filter_count17. `v7.4/pending.js` và `recover.js` giữ nguyên; chỉ selector native thêm ID. Hai module URL/key giữ nguyên, script paths đổi hash để nhận mã mới.
+- Build đầy đủ và bản Minh pass; test85 routes, prompt dispatch/multipart/ảnh tham chiếu/quota shared/cap/no implicit retry pass; V7.1/V7.2/V7.3/V7.4 regression (V7.4 270 cặp) pass, TypeScript và dry-run cả hai tài khoản pass. Test lúc đầu so prompt thất bại vì multipart chuẩn hóa LF thành CRLF; đã chuẩn hóa newline trong assertion, không sửa prompt để chữa test.
+- Deploy Nam `50fd613d-1bb2-4d9d-9012-4d088e0d781b`, Minh `cde107c7-4631-42bf-8d72-d07a91c01c0b`. Không thay tài khoản, database, key hoặc giới hạn đã chốt.
+- `node v7.4/live-luxury.mjs [minh1011]` kiểm tra module/3 scripts bằng hash, icon/config17, mô phỏng gateway502 qua response recovery thật với **ảnh mẫu màu trơn**, không ảnh người dùng. Nam200/JPEG215862bytes (~10,95s), Minh200/JPEG203790bytes (~7,08s); mỗi bản đúng1POST AI. Chỉ chứng minh pipeline/dispatch/tảiảnh, chưa chứng minh chỉnh trang phục trên chân dung hoặc UI trên iPhone. Kết quả cục bộ private/ bị Git bỏ qua.
+- Cần người dùng cập nhật module, kết nối lại Shadowrocket để tải config mới rồi chọn AI → Sang trọng. Module link chính và link chia sẻ Minh giữ nguyên. Source của lượt bổ sung này chưa commit/push Git.
+
+## Triển khai thêm tài khoản Minh để chia sẻ — 17/11/2026
+
+- Người dùng yêu cầu thêm bản V7.4 trên `nguyendinhminh1011@gmail.com` để tách mức sử dụng của bạn bè khỏi tài khoản Nam. Không thay deployment gốc.
+- Đã tạo OAuth profile `minh1011` qua Wrangler, người dùng xác nhận OAuth và xác minh email khi deploy bị chặn code10034. Profile chỉ active cho `deployments/minh1011`; default dự án gốc vẫn Nam. Không xuất/log OAuth token hoặc renderer key.
+- Account mới `3af454bb633da80ba0e33d853e1aa4cc`, workers.dev `minh1011-locket`, Worker `locket-photobooth`, origin `https://locket-photobooth.minh1011-locket.workers.dev`. D1 mới `locket-photobooth-results`/`5e15b045-7c6e-4b1e-97ce-162d5ab7adbb`, đủ ba bảng results/diagnostic_events/ai_daily_usage.
+- Source triển khai và tài liệu tại `deployments/minh1011/`. Build lấy V7.4 đã chốt, thay đúng origin/hostname/renderer key; kiểm tra mã sau thay biến bằng đối chiếu chính xác source và ảnh bằng hash. Chỉ xuất ba scripts/module V7.4 cho origin mới, giữ 16 filters. Test xác nhận regex response hook dùng hostname mới (đã sửa khác biệt escape dấu gạch ngang giữa Python/JS trước deploy).
+- Renderer key độc lập được tạo cục bộ vào private/secrets.json (0600), upload Secret LAB_KEY trên account mới. Không chuyển key/counter/ảnh của account cũ sang. Toàn bộ public/private/dev.vars/wrangler-generated của bản mới bị Git bỏ qua.
+- Publish ban đầu `08304512-8b7d-4267-8615-9469befec630`, secret upload tạo phiên bản đang chạy `fe502c3b-43f2-459c-ac1a-4882b65a02b2` (deployment `d1da71e9-09fb-4b1b-9d16-bc2a164a87c6`). Không nâng tài khoản trả phí.
+- Live: module/3scripts hash pass, health200, key sai401; recovery Photobooth mô phỏng gateway→Worker mới200/body2054, tải JPEG226348bytes; AI thật với ảnh mẫu200/JPEG232691bytes,7779ms. D1 mới sau test có một lượt AI và hai ảnh kết quả. AI cap vẫn80/ngày cho cả bản chia sẻ, không phải mỗi người. Chưa có xác nhận iPhone dùng origin mới; hành vi source chỉ thay host/key, bản V7.4 gốc đã được user xác nhận.
+- Link module mới: tra `deployments/minh1011/private/links.json` tại máy triển khai; không công bố URL tải module chứa key trong Git. Health account gốc bằng Node fetch200/16filters; không redeploy account gốc. Python urllib một lượt403 nhưng Node fetch200; không suy ra account gốc hỏng từ lượt urllib.
+
 ## Bản chốt người dùng xác nhận — V7.4, 17/11/2026
 
 - Người dùng báo V7.4 đã chạy được và yêu cầu chốt, push lên GitHub. Hiểu “v4” trong tin nhắn cuối là V7.4 theo bản đang thử; không phải thử nghiệm V4 cũ.
