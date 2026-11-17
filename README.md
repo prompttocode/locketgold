@@ -6,6 +6,16 @@ Mã nguồn thử nghiệm Photobooth và khung ảnh riêng: Cloudflare Workers
 
 Không đưa API key, chứng chỉ, cookie, dữ liệu người dùng hoặc script đã nhúng khóa truy cập lên Git. Module dùng trên điện thoại được tạo cục bộ từ mẫu và không nằm trong repo.
 
+## Bản chốt: V7.4
+
+Ngày 17/11/2026, người dùng xác nhận V7.4 đã chạy được trên iPhone và chọn bản này. Mã nguồn, giới hạn và hướng dẫn nằm trong [v7.4/README.md](v7.4/README.md).
+
+V7.4 giữ cấu hình/filter và native rewrite của V7. Khi gặp đúng mẫu lỗi gateway 502 đã ghi nhận, response script gọi Worker độc lập một lần rồi thay phản hồi lỗi bằng kết quả. Không gửi request mồi; không dùng đường early response của V7.2. Phản hồi thành công, lỗi quota và lỗi JSON của Worker không bị thử lại.
+
+Các lệnh mặc định dùng V7.4: `npm run build`, `npm test`, `npm run check`, `npm run deploy`. Build lần lượt tạo tài nguyên V7 → V7.1 → V7.2 → V7.3 → V7.4 để giữ nguyên các URL cũ; V7.2/V7.3 chỉ được lưu làm lịch sử thử nghiệm. Các tệp sinh có khóa vẫn bị Git bỏ qua. Worker handler hiện tại là snapshot tại `v7.1/src/`.
+
+Đã kiểm tra adapter/cache và phục hồi có điều kiện bằng test tự động, thử phục hồi với server thật bằng ảnh mẫu, và được người dùng xác nhận hoạt động trong Locket. Điều này không bảo đảm mọi điều kiện mạng hoặc mọi trường hợp sử dụng; xem giới hạn cache và điều kiện thử lại trong tài liệu V7.4.
+
 ## Bản v7
 
 - Xóa nhóm “Hiệu ứng AI 3D Hot” và “Trò chơi Locket”.

@@ -1,5 +1,49 @@
 # Ghi nhớ dự án
 
+## Bản chốt người dùng xác nhận — V7.4, 17/11/2026
+
+- Người dùng báo V7.4 đã chạy được và yêu cầu chốt, push lên GitHub. Hiểu “v4” trong tin nhắn cuối là V7.4 theo bản đang thử; không phải thử nghiệm V4 cũ.
+- Giữ deployment `ab5c25c9-3f3b-4b12-a852-e735d02a6e08`, module V7.4 và V7 dự phòng nguyên vẹn. Lần chốt này chỉ cập nhật tài liệu, lệnh mặc định và Git; không triển khai thêm thay đổi routing/backend.
+- `package.json` chuyển build/test/dev/deploy/check/types sang luồng V7.4; build cần tạo các tài nguyên V7–V7.3 làm đầu vào để giữ URL cũ. Các thử nghiệm V7.2/V7.3 được lưu source cùng trạng thái thất bại, không phải bản được chọn.
+- Không khẳng định hết lỗi trong mọi điều kiện hoặc đã kiểm thử tải nhiều người dùng chỉ từ xác nhận này. Các giới hạn cache/nonce/TTL và điều kiện retry vẫn giữ trong README V7.4.
+
+## V7.2 log đủ bốn lần và V7.4 — 17/11/2026
+
+- Nguồn người dùng: `/Users/namdeptrai/Downloads/PacketTunnel-20261117135911.log`. Bốn lần relay_start đều đọc body 1788 ký tự, bốn relay_response đều HTTP 200/body 1928: 13:59:37.157 (2696ms), 13:59:45.413 (1940ms), 13:59:53.415 (2065ms), 14:00:02.471 (2313ms). Sau mỗi lần là `send early response to client`; không có GET `/results/` trong file. App phiên bản 2.73.0. Không log/copy Authorization, Cookie hoặc LAB_KEY trong tài liệu.
+- Điều này xác nhận `$httpClient.post` của V7.2 tới Worker thành công trên iPhone cả bốn lần. Chưa biết raw HTTP/JSON Locket nhận thực tế, nên chỉ khoanh vùng đường trả early response/client parsing, chưa kết luận Content-Length/status/body hay engine bug nào cụ thể.
+- Người dùng báo V7.3 vẫn xen kẽ. Không tiếp tục request mồi `/health`.
+- Đã deploy thử riêng V7.4 `ab5c25c9-3f3b-4b12-a852-e735d02a6e08` từ `v7.4/wrangler.jsonc`, chỉ thêm ba assets. Handler V7.1 giữ nguyên, mọi assets cũ giữ byte-identical.
+- V7.4: native rewrite V7 như cũ; request JSON dưới 65536 ký tự được giữ tạm trên thiết bị trong 16 slot cố định `$persistentStore`, TTL logic 120 giây; không lưu auth headers/cookie/key renderer. `X-Namdz-Pending` là nonce tương quan không bí mật. Response hook đọc đúng nonce, xóa slot trước async work; slot mất/hết hạn/tranh chấp thì không retry nhầm request.
+- Chỉ một lần phục hồi nếu 502, text/plain, Via, thiếu Server/CF-Ray và body ngắn chứa Bad Gateway. Gọi Worker độc lập rồi trả `{status,headers,body}` trực tiếp từ http-response, tránh early response `{response:{...}}`. 200, 401/429, lỗi JSON Worker, 502 có CF-Ray giữ nguyên và xóa cache. Không có đảm bảo exactly-once phía backend nếu gateway khác làm mất headers.
+- Kiểm tra 255 cặp filter/body, cache tiêu thụ/giới hạn/TTL/nonce, duplicate callback, giữ routing V7, không retry success/quota/JSON errors, không forward auth và mọi assets cũ bất biến: pass. V7.1/V7.2/V7.3 regression, TypeScript, deploy dry-run pass.
+- Live Node mô phỏng gateway 502 rồi dùng Worker thật với ảnh mẫu: một POST phục hồi 200/body1928, GET JPEG 200/226348 byte, 808ms cho POST. Hash module/scripts V7, V7.3, V7.4 pass. Chưa kiểm chứng response hook, shared store/header hay hiển thị ảnh trên iPhone; cần thử bản V7.4. Console `pending_saved`, `native_response`, `recovery_start`, `recovery_response`, `pending_missing` hỗ trợ phân biệt.
+
+## V7.3 thử request mồi — 17/11/2026
+
+- Người dùng thử V7.2 bốn lần đều thất bại, quay lại V7, sau đó yêu cầu thử riêng V7.3 với phương pháp fake/mồi. Không coi relay V7.2 là đã chạy được trên iPhone.
+- V7.3 deploy `9daa082a-4285-4240-bbdc-5285cc63c426` từ `v7.3/wrangler.jsonc`, chỉ thêm ba assets module/native/observer. Handler vẫn dùng nguyên `v7.1/src/index.ts`; mọi tài nguyên cũ giữ byte-identical, V7 vẫn có thể chọn lại.
+- Cách thử: `$httpClient.get` tới `/health` trước, timeout 3 giây/watchdog 3,5 giây khi có timer, rồi tiếp tục quyết định native rewrite V7 nguyên vẹn. Probe không mang ảnh, dữ liệu request, token Locket hay khóa renderer; không dùng Images/AI hoặc ghi D1. Chỉ một probe, không fake ảnh hoặc retry render/AI. Log cục bộ revision `7.3`, `prime_start`/`prime_done` và observer như V7.1.
+- Giới hạn cần nói rõ: GET chạy trên client riêng, không chứng minh thao tác được cùng socket upstream của Locket hoặc tương đương bấm chụp hai lần. Đây chỉ là thí nghiệm warm-up; chưa biết có sửa được xen kẽ. Khi probe lỗi/timeout/thiếu client vẫn tiếp tục theo V7 để không chặn ảnh thật.
+- Kiểm tra 340 biến thể filter/body giữ nguyên quyết định V7, watchdog/callback trùng/lỗi mạng/thiếu client/UTF-8, không gửi dữ liệu ảnh/credentials vào probe và mọi assets cũ bất biến: pass. V7.1/V7.2 regression pass; deploy dry-run pass.
+- Live Node mô phỏng thứ tự: health 200 rồi một POST ảnh mẫu Photobooth 200, GET JPEG 200/226348 byte. Không kiểm chứng engine hoặc tái sử dụng kết nối trên iPhone. Module/scripts V7, V7.1, V7.2, V7.3 được đối chiếu hash trên server, pass.
+
+## V7.2 relay độc lập — 17/11/2026
+
+- Đã deploy `2042080b-7129-45f3-8a7c-721446a6579c` bằng `v7.2/wrangler.jsonc`. Chỉ thêm hai assets: module V7.2 và relay script. Handler vẫn trỏ nguyên nguồn `v7.1/src/index.ts`; tất cả assets V7/V7.1 giữ byte-identical.
+- Script dùng `$httpClient.post` gửi JSON gốc cho Worker, rồi `$done({response:{status,headers,body}})`; không rewrite URL của kết nối API Locket. Chỉ xử lý filter riêng, không gửi Authorization/Cookie/Host/Content-Length của Locket sang Worker. Chỉ một POST mỗi lần gọi, không retry hay request log. Console revision `7.2`, các stage `relay_start`, `relay_response`, `relay_network_error`, `relay_invalid_response`.
+- Kiểm tra 340 biến thể filter/body, UTF-8 khi không có TextDecoder, HTTP status/statusCode/status-line, lỗi mạng/response không hợp lệ, duplicate callback, không lộ dữ liệu log và giữ nguyên mọi assets cũ: pass. V7.1 tests 87 trường hợp và TypeScript pass; deploy dry-run pass.
+- Live test mô phỏng `$httpClient` bằng Node fetch với ảnh mẫu màu trơn: một POST 200, JSON 1928 ký tự, JPEG tải 200/226348 byte, tổng 693ms. Đã kiểm tra module/scripts V7, V7.1, V7.2 trên server bằng hash. Đây không phải kiểm chứng engine Shadowrocket/iPhone; chưa khẳng định hết lỗi xen kẽ.
+- Khi thử chỉ chọn V7.2, ngắt/kết nối lại Shadowrocket và đóng/mở Locket; không cần cài lại vì catalog/config giữ nguyên V7. Thử 3–4 lần Photobooth trước AI.
+
+## Đối chiếu PacketTunnel đầy đủ — 17/11/2026, 11:32
+
+- Nguồn: `/Users/namdeptrai/Downloads/PacketTunnel-20261117113142.log`. Chỉ trích metadata kết nối, không sao chép headers xác thực hoặc nội dung ảnh vào tài liệu.
+- Stream 196 kết nối ban đầu tới `api.locketcamera.com:443` / `34.110.244.57:443` lúc 11:31:49 (dòng 80), rồi tái sử dụng cho nhiều API Locket.
+- Lần lỗi 11:32:09: body JSON đọc được, dài 1788, selected và rewritten đều đúng; script giữ body/method. Sau rewrite URL tới Worker, dòng 710 gửi ngay qua remote đang có; không có lookup/connect Worker mới trước phản hồi. Dòng 716 ghi 502, text/plain, body 52, có Via, không có Server/CF-Ray. Log không chứa nguyên nội dung phản hồi 52 ký tự hay giá trị Via, nên chưa xác định được chính xác gateway phát sinh 502.
+- Lần thành công 11:32:18: cùng kiểu/body length, rewrite đúng; dòng 770 giữ pending data, dòng 779 mở kết nối tới Worker, dòng 797 kết nối `172.67.222.116:443`, dòng 798 gửi pending data. Dòng 829 nhận 200 JSON, Server Cloudflare, có CF-Ray; tiếp theo ứng dụng GET ảnh kết quả.
+- Bằng chứng nghiêng mạnh về đường kết nối upstream cũ không được đổi đích đúng ở lần lỗi. Chưa chứng minh chi tiết nội bộ engine Shadowrocket/SNI hoặc thành phần trả 502. Giả thuyết decode body thất bại không áp dụng cho cặp thử này.
+- Hướng thử tiếp: cô lập việc gọi server riêng khỏi upstream connection của Locket, thay vì chỉ đổi URL trên stream cũ. Chưa triển khai cách này; không tự retry AI vì có thể tốn thêm quota. Giữ nguyên V7 và V7.1 hiện tại.
+
 ## V7.1 chẩn đoán riêng — 17/11/2026
 
 - Đã deploy `c0dd8411-cb1e-452a-a3e7-2d0397e51007` bằng `v7.1/wrangler.jsonc`; handler giữ nguyên snapshotV7, chỉ thêm3staticassetdebug. V7modulevàscriptsvẫnđượcgiữ.

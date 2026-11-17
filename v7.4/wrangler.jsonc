@@ -1,0 +1,15 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "namdz-photobooth",
+  "account_id": "07bc86a6c754a3c650df4d8f413d0107",
+  "main": "../v7.1/src/index.ts",
+  "compatibility_date": "2026-11-16",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "ai": {"binding": "AI"},
+  "assets": {"directory": "./public", "binding": "ASSETS", "run_worker_first": true},
+  "images": {"binding": "IMAGES"},
+  "d1_databases": [{"binding": "RESULTS", "database_name": "namdz-photobooth-results", "database_id": "bcdcd7d5-3b55-41a5-9b8a-56f843fc1714"}],
+  "observability": {"enabled": true, "head_sampling_rate": 0.1},
+  "triggers": {"crons": ["*/5 * * * *"]}
+}

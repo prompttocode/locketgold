@@ -3,12 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev --config v7/wrangler.jsonc",
-    "build": "python3 v7/build.py",
-    "types": "wrangler types --config v7/wrangler.jsonc v7/worker-configuration.d.ts",
-    "deploy": "wrangler deploy --config v7/wrangler.jsonc",
-    "test": "node v7/test.mjs && node v7/test-ai.mjs",
-    "check": "tsc --project v7/tsconfig.json"
+    "dev": "wrangler dev --config v7.4/wrangler.jsonc",
+    "build": "python3 v7/build.py && python3 v7.1/build.py && python3 v7.2/build.py && python3 v7.3/build.py && python3 v7.4/build.py",
+    "types": "wrangler types --config v7.4/wrangler.jsonc v7.1/worker-configuration.d.ts",
+    "deploy": "wrangler deploy --config v7.4/wrangler.jsonc",
+    "test": "node v7/test.mjs && node v7/test-ai.mjs && node v7.1/test.mjs && node v7.2/test.mjs && node v7.3/test.mjs && node v7.4/test.mjs",
+    "check": "tsc --project v7.1/tsconfig.json"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261116.1",
